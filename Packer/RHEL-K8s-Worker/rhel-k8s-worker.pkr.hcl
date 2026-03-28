@@ -43,7 +43,7 @@ source "vsphere-iso" "machine_template" {
     "/worker.cfg" = templatefile("${path.root}/Scripts/worker.cfg", {
       key            = var.RHEL_ACTIVATION_KEY
       org            = var.REDHAT_ORGID
-      setup_user     = var.ssh_user
+      setup_user     = var.ssh_username
       setup_password = var.ssh_password
     })
   }
