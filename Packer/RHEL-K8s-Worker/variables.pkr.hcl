@@ -1,155 +1,155 @@
 variable "username" {
 
-	type = string
+  type = string
 
 }
 
 variable "password" {
 
-	type = string
+  type = string
 
 }
 
 variable "vcenter_server" {
 
-	type = string
+  type = string
 
 }
 
 variable "ssh_username" {
 
-	type = string
+  type = string
 
 }
 
 variable "ssh_password" {
 
-	type = string
+  type = string
 
 }
 
 variable "vm_name" {
 
-	type = string
-	default = "rhel_worker_template"
+  type    = string
+  default = "rhel_worker_template"
 }
 
 variable "vm_guest_os_type" {
 
-	type = string
-	default = "rhel9_64Guest"
+  type    = string
+  default = "rhel9_64Guest"
 
 }
 
 variable "datastore" {
 
-	type = string
-	default = "datastore1"
+  type    = string
+  default = "datastore1"
 
 }
 
-variable "cpu_count" { 
+variable "cpu_count" {
 
-	type = number
-	default = 2
+  type    = number
+  default = 2
 
 }
 
 variable "ram_size" {
 
-	type = number
-	default = 8192
+  type    = number
+  default = 8192
 
 }
 
 variable "disk_size" {
 
-	type = number
-	default = 256000
+  type    = number
+  default = 256000
 
 }
 
-variable "thin_provisioned"{
+variable "thin_provisioned" {
 
-	type = bool
-	default = true
+  type    = bool
+  default = true
 
 }
 
 variable "iso_path" {
 
-	type = list(string)
-	default = ["[datastore1] ISOS/rhel-9.7-x86_64-boot.iso"]
+  type    = list(string)
+  default = ["[datastore1] ISOS/rhel-9.7-x86_64-boot.iso"]
 
 }
 
 variable "boot_commands" {
 
-	type = list(string)
-	default = [
-		"c",
-		"<wait>",
-		"linuxefi /images/pxeboot/vmlinuz inst.stage2=hd:LABEL=RHEL-9-7-0-BaseOS-x86_64 inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/worker.cfg quiet<enter>",
-		"initrdefi /images/pxeboot/initrd.img<enter>",
-		"boot<enter>"]
+  type = list(string)
+  default = [
+    "c",
+    "<wait>",
+    "linuxefi /images/pxeboot/vmlinuz inst.stage2=hd:LABEL=RHEL-9-7-0-BaseOS-x86_64 inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/worker.cfg quiet<enter>",
+    "initrdefi /images/pxeboot/initrd.img<enter>",
+  "boot<enter>"]
 }
 
 variable "RHEL_ACTIVATION_KEY" {
 
-	type = string
+  type = string
 
 }
 
 variable "REDHAT_ORGID" {
 
-	type = string
+  type = string
 
 }
 
-variable "network_name"{
+variable "network_name" {
 
-	type = string
-	default = "Updating Port Group"
+  type    = string
+  default = "Updating Port Group"
 
 }
 
-variable "network_card_type"{
+variable "network_card_type" {
 
-	type = string
-	default = "vmxnet3"
+  type    = string
+  default = "vmxnet3"
 
 }
 
 variable "post_install_script" {
 
-	type = string
-	default = "Scripts/worker_setup.sh"
+  type    = string
+  default = "Scripts/worker_setup.sh"
 
 }
 
 variable "template" {
 
-	type = bool
-	default = true
+  type    = bool
+  default = true
 
 }
 
 variable "http_directory" {
 
-	type = string
-	default = "Scripts"
+  type    = string
+  default = "Scripts"
 
 }
 
 variable "firmware" {
 
-	type = string
-	default = "efi"
+  type    = string
+  default = "efi"
 
 }
 
 variable "bind_address" {
 
-	type = string
+  type = string
 
 }
