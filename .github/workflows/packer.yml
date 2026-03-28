@@ -7,13 +7,12 @@ on:
     paths:
       - 'Packer/**'
 
-strategy:
-  matrix:
-    template: ["RHEL-K8s-Worker"]
-
 jobs:
   packer:
     runs-on: self-hosted
+    strategy:
+      matrix:
+        template: ["RHEL-K8s-Worker"]
     env:
       PKR_VAR_REDHAT_ORGID: ${{ secrets.REDHAT_ORGID }}
       PKR_VAR_RHEL_ACTIVATION_KEY: ${{ secrets.RHEL_ACTIVATION_KEY }}
