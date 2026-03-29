@@ -156,7 +156,7 @@ variable "bind_address" {
 
 variable "vm_folder" {
 
-  type = string
+  type    = string
   default = "CYBR-4740-Final/Templates"
 
 }
