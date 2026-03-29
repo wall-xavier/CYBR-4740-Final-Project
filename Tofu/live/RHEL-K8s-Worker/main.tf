@@ -40,7 +40,7 @@ data "vsphere_network" "network" {
 
 data "vsphere_virtual_machine" "template" {
 
-	name = var.vm_template
+	name = "${data.vsphere_datacenter.datacenter.id}/${var.vm_template}"
 	datacenter_id = data.vsphere_datacenter.datacenter.id
 
 }
@@ -48,7 +48,7 @@ data "vsphere_virtual_machine" "template" {
 resource "vsphere_virtual_machine" "rhel-worker" {
 
 	count = var.machine_count
-	name = "${var.vm_name}-${random_uuid.vm_id[count.index].result}"
+	name = "${var.vm_name}-${terraform.workspace}-${random_uuid.vm_id[count.index].result}"
 	resource_pool_id = data.vsphere_host.host.resource_pool_id
 	datastore_id = data.vsphere_datastore.datastore.id
 	num_cpus = var.vm_cpus
@@ -56,20 +56,24 @@ resource "vsphere_virtual_machine" "rhel-worker" {
 	guest_id = data.vsphere_virtual_machine.template.guest_id
 	scsi_type = data.vsphere_virtual_machine.template.scsi_type
 	firmware = data.vsphere_virtual_machine.template.firmware
+	folder = "/${data.vsphere_datacenter.datacenter.id}/${var.vm_folder}/${terraform.workspace}"
+
 	network_interface {
 		network_id = data.vsphere_network.network.id
 		adapter_type = data.vsphere_virtual_machine.template.network_interface_types[0]
 	}
+
 	disk {
 		label = "disk0"
 		size = data.vsphere_virtual_machine.template.disks.0.size
 		thin_provisioned = data.vsphere_virtual_machine.template.disks.0.thin_provisioned
 	}
+
 	clone{
 		template_uuid = data.vsphere_virtual_machine.template.id
 		customize{
 			linux_options{
-				host_name = "${var.vm_name}-${random_uuid.vm_id[count.index].result}"
+				host_name = "${var.vm_name}-${terraform.workspace}-${random_uuid.vm_id[count.index].result}"
 				domain = var.vm_domain_name
 			}
 			network_interface{

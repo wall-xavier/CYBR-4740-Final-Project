@@ -76,7 +76,7 @@ variable "vm_template" {
 
 	description = "Template for OpenTofu to clone"
 	type = string
-	default = "rhel_worker_template"
+	default = "CYBR-4740-Final/Templates/rhel_worker_template"
 
 }
 
@@ -93,5 +93,13 @@ variable "machine_count" {
 	description = "The amount of machines we would like to deploy to the network"
 	type = number
 	default = 3
+
+}
+
+variable "vm_folder" {
+
+	description = "The folder to keep all the project machines"
+	type = string
+	default = "CYBR-4740-Final/RHEL-Worker"
 
 }

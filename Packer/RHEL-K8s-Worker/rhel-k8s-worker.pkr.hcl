@@ -17,6 +17,7 @@ source "vsphere-iso" "machine_template" {
   vm_name             = var.vm_name
   guest_os_type       = var.vm_guest_os_type
   datastore           = var.datastore
+  folder              = var.vm_folder
 
   CPUs = var.cpu_count
   RAM  = var.ram_size

@@ -153,3 +153,10 @@ variable "bind_address" {
   type = string
 
 }
+
+variable "vm_folder" {
+
+  type = string
+  default = "CYBR-4740-Final/Templates"
+
+}
