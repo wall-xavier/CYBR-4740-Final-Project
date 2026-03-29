@@ -87,3 +87,11 @@ variable "vm_network" {
 	default = "Updating Port Group"
 
 }
+
+variable "machine_count" {
+
+	description = "The amount of machines we would like to deploy to the network"
+	type = number
+	default = 3
+
+}

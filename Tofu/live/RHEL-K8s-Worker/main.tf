@@ -10,12 +10,7 @@ provider "vsphere" {
 
 resource "random_uuid" "vm_id" {
 
-}
-
-locals{
-
-	full_vm_name = "${var.vm_name}-${random_uuid.vm_id.result}"
-	full_vm_hostname = "${var.vm_host_name}-${random_uuid.vm_id.result}"
+	count = var.machine_count
 
 }
 
@@ -52,7 +47,8 @@ data "vsphere_virtual_machine" "template" {
 
 resource "vsphere_virtual_machine" "rhel-worker" {
 
-	name = local.full_vm_name
+	count = var.machine_count
+	name = "${var.vm_name}-${random_uuid.vm_id[count.index].result}"
 	resource_pool_id = data.vsphere_host.host.resource_pool_id
 	datastore_id = data.vsphere_datastore.datastore.id
 	num_cpus = var.vm_cpus
@@ -73,7 +69,7 @@ resource "vsphere_virtual_machine" "rhel-worker" {
 		template_uuid = data.vsphere_virtual_machine.template.id
 		customize{
 			linux_options{
-				host_name = local.full_vm_hostname
+				host_name = "${var.vm_name}-${random_uuid.vm_id[count.index].result}"
 				domain = var.vm_domain_name
 			}
 			network_interface{
