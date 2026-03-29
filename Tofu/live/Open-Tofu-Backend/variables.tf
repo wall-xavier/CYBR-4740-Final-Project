@@ -2,6 +2,7 @@ variable "account_id" {
 
 	description = "Account ID used for the R2 storage"
 	type = string
+
 }
 
 variable "cloudflare_api_token" {
@@ -31,7 +32,7 @@ variable "bucket_location" {
 
 	description = "Location the bucket will be stored"
 	type = string
-	default = "apac"
+	default = "wnam"
 
 }
 
