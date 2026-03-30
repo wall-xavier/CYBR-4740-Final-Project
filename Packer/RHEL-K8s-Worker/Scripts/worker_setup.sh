@@ -30,6 +30,10 @@ sudo sed -i '/ swap / s/^/#/' /etc/fstab
 sudo setenforce 0
 sudo sed -i 's/^SELINUX=enforcing$/SELINUC=permissive' /etc/selinux/config
 
+# Enabled Firewalld Rules
+sudo firewall-cmd --permanent --add-port=6443/tcp
+sudo firewall-cmd --permanent --add-port=10250/tcp
+
 # Get Kubernetes Repo
 cat << EOF | sudo tee /etc/yum.repos.d/kubernetes.repo
 [kubernetes]

@@ -16,6 +16,10 @@ containerd config default | sudo tee /etc/containerd/config.toml >/dev/null
 sudo sed -i 's/SystemdCgroup = false/SystemdCgroup = true/' /etc/containerd/config.toml
 sudo systemctl restart containerd && sudo systemctl enable containerd
 
+# Disable swap
+sudo swapoff -a
+sudo sed -i '/ swap / s/^/#/' /etc/fstab
+
 # Setup /etc/hosts
 echo "172.16.1.1 master01" | sudo tee -a /etc/hosts
 echo "172.16.1.2 worker01" | sudo tee -a /etc/hosts
@@ -31,6 +35,13 @@ enabled=1
 gpgcheck=1
 gpgkey=https://pkgs.k8s.io/core:/stable:/v1.30/rpm/repodata/repomd.xml.key
 EOF
+
+# Enabled Firewalld Rules
+sudo firewall-cmd --permanent --add-port=6443/tcp
+sudo firewall-cmd --permanent --add-port=10250/tcp
+
+# Enable IP Forwarding
+echo "1" > /prov/sys/net/ipv4/ip_forward
 
 # Install and enable Kubernetes
 sudo dnf install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
