@@ -41,7 +41,7 @@ sudo firewall-cmd --permanent --add-port=6443/tcp
 sudo firewall-cmd --permanent --add-port=10250/tcp
 
 # Enable IP Forwarding
-echo "1" > /proc/sys/net/ipv4/ip_forward
+sudo echo "1" > /proc/sys/net/ipv4/ip_forward
 
 # Install and enable Kubernetes
 sudo dnf install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
@@ -51,9 +51,9 @@ sudo systemctl enable --now kubelet
 sudo kubeadm init --control-plane-endpoint=master01 --pod-network-cidr=10.0.247.0/16
 
 # Configure Kubectl
-sudo mkdir -p $HOME/.kube
-sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
-sudo chown $(id -u):$(id -g) $HOME/.kube/config
+mkdir -p $HOME/.kube
+cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+chown $(id -u):$(id -g) $HOME/.kube/config
 
 # Setup Vmware tools
 sudo dnf install -y open-vm-tools && sudo systemctl enable --now vmtoolsd
