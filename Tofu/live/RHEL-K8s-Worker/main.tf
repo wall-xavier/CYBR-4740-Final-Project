@@ -94,7 +94,10 @@ resource "vsphere_virtual_machine" "rhel-worker" {
       }
       network_interface {
 
+		ipv4_address = cidrhost(var.base_address, count.index + 2)
+		ipv4_netmask = var.ip_netmask
       }
+	ipv4_gateway = var.ip_gateway
     }
   }
 }

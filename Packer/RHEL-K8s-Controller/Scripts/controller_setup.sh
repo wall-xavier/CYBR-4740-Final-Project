@@ -16,19 +16,11 @@ containerd config default | sudo tee /etc/containerd/config.toml >/dev/null
 sudo sed -i 's/SystemdCgroup = false/SystemdCgroup = true/' /etc/containerd/config.toml
 sudo systemctl restart containerd && sudo systemctl enable containerd
 
-#Setup /etc/hosts
+# Setup /etc/hosts
 echo "172.16.1.1 master01" | sudo tee -a /etc/hosts
 echo "172.16.1.2 worker01" | sudo tee -a /etc/hosts
 echo "172.16.1.3 worker02" | sudo tee -a /etc/hosts
 echo "172.16.1.4 worker03" | sudo tee -a /etc/hosts
-
-# Disable swap
-sudo swapoff -a
-sudo sed -i '/ swap / s/^/#/' /etc/fstab
-
-# Disable SELinux
-sudo setenforce 0
-sudo sed -i 's/^SELINUX=enforcing$/SELINUC=permissive' /etc/selinux/config
 
 # Get Kubernetes Repo
 cat << EOF | sudo tee /etc/yum.repos.d/kubernetes.repo
@@ -43,6 +35,14 @@ EOF
 # Install and enable Kubernetes
 sudo dnf install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
 sudo systemctl enable --now kubelet
+
+# Start Kubernetes Controller
+sudo kubeadm init --control-plane-endpoint=master01 --pod-network-cidr=10.0.247.0/16
+
+# Configure Kubectl
+sudo mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
 # Setup Vmware tools
 sudo dnf install -y open-vm-tools && sudo systemctl enable --now vmtoolsd

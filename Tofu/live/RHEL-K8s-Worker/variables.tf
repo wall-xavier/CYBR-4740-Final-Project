@@ -103,3 +103,27 @@ variable "vm_folder" {
   default     = "CYBR-4740-Final/Machines/RHEL-Worker"
 
 }
+
+variable "base_address" {
+
+  description = "The base address for the loop to create the ip addressing scheme"
+  type = string
+  default = "172.16.1.0/24"
+
+}
+
+variable "ip_gateway" {
+
+  description = "The IP gateway to use for the machine"
+  type = string
+  default = "172.16.1.254"
+
+}
+
+variable "ip_netmask" {
+
+  description = "The netmask to use for the VM network"
+  type = number
+  default = 24
+
+}
