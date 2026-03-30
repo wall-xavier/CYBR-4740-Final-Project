@@ -124,6 +124,9 @@ resource "vsphere_virtual_machine" "rhel-worker" {
 					  permissions: '0644'
 					  content: |
 					    ${indent(10, local.rendered_hosts)}
+				run_cmd:
+					- [systemctl, daemon-reload]
+					- [systmctl, enable kubelet]
 				EOF
     )
   }

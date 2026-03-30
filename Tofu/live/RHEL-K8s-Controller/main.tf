@@ -15,6 +15,8 @@ locals {
 
   ]
 
+  worker_static = cidrhost(var.env_networks[terraform.workspace].subnet, 1)
+
   rendered_hosts = templatefile("${path.module}/configuration/hosts.tftpl", {
     env_name  = terraform.workspace
     master_ip = cidrhost(var.env_networks[terraform.workspace].subnet, 1)
@@ -124,6 +126,12 @@ resource "vsphere_virtual_machine" "rhel-worker" {
 					  permissions: '0644'
 					  content: |
 					    ${indent(10, local.rendered_hosts)}
+				run_cmd:
+					- [systemctl, daemon-reload]
+					- [systemctl, enable, kubelet]
+					- kubeadm init --control-plane-endpoint="master01:6443" --upload-certs --apiserver-cert-extra-sans=127.0.0.1,${local.worker_static}
+					- mkdir -p ${var.ssh_username}/.kube/
+					- cp /etc/kubernetes/admin.conf ${var.ssh_username}/.kube/config
 				EOF
     )
   }
