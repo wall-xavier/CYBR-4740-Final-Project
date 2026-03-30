@@ -22,10 +22,11 @@ data "vsphere_host" "host" {
 
 resource "vsphere_host_port_group" "pg" {
 
-  name                = var.port_group_name
+  for_each = var.env_networks
+  name                = each.value.network_name
   host_system_id      = data.vsphere_host.host.id
   virtual_switch_name = var.virtual_switch_name
 
-  vlan_id = var.vlan_id
+  vlan_id = each.value.vlan
 
 }

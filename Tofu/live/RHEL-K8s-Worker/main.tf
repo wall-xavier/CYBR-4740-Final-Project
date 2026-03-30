@@ -49,7 +49,7 @@ data "vsphere_datastore" "datastore" {
 
 data "vsphere_network" "network" {
 
-  name          = var.vm_network
+  name          = var.env_networks[terraform.workspace].vm_network
   datacenter_id = data.vsphere_datacenter.datacenter.id
 
 }
@@ -94,10 +94,10 @@ resource "vsphere_virtual_machine" "rhel-worker" {
       }
       network_interface {
 
-		ipv4_address = cidrhost(var.base_address, count.index + local.env_index)
+		ipv4_address = cidrhost(var.env_networks[terraform.workspace].subnet, count.index + var.ip_offset)
 		ipv4_netmask = var.ip_netmask
       }
-	ipv4_gateway = var.ip_gateway
+	ipv4_gateway = var.env_networks[terraform.workspace].gateway
     }
   }
 }

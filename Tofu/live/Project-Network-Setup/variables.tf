@@ -1,19 +1,3 @@
-variable "port_group_name" {
-
-  description = "Port group to be used for the project"
-  type        = string
-  default     = "CYBR-4740-Port-Group"
-
-}
-
-variable "vlan_id" {
-
-  description = "Vlan to use for the project"
-  type        = number
-  default     = 800
-
-}
-
 variable "vsphere_user" {
 
   description = "Username to get into vsphere"
@@ -48,4 +32,30 @@ variable "virtual_switch_name" {
   type        = string
   default     = "Profos Switch"
 
+}
+
+variable "env_networks" {
+
+        description = "The mapping of the networks for each environment"
+        type = map(object({
+		network_name = string
+		vlan = number
+		}))
+
+        default = {
+
+                default = { 
+			network_name = "CYBR-4740-Project-Network-Default"
+			vlan = 800
+		}
+                dev = { 
+			network_name = "CYBR-4740-Project-Network-Dev"
+			vlan = 810
+		}
+                prod = {
+			network_name = "CYBR-4740-Project-Network-Prod"
+			vlan = 820
+		}
+
+        }
 }
