@@ -11,7 +11,7 @@ provider "vsphere" {
 locals {
 
   current_worker_ips = [
-    for i in range(3) : cidrhost(var.env_networks[terraform.workspace].subnet, i + var.ip_offset)
+    for i in range(3) : cidrhost(var.env_networks[terraform.workspace].subnet, i + 2)
 
   ]
 

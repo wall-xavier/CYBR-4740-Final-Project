@@ -13,7 +13,7 @@ sudo systemctl enable docker
 
 # Setup Containerd
 containerd config default | sudo tee /etc/containerd/config.toml >/dev/null
-sudo sed -i 's/SystemdCgroup = false/SystemdCgroup = true/' /etc/containerd/config.toml
+sudo sed -i 's/SystemdCgroup = false/SystemdCgroup = true/g' /etc/containerd/config.toml
 sudo systemctl restart containerd && sudo systemctl enable containerd
 
 # Disable swap
