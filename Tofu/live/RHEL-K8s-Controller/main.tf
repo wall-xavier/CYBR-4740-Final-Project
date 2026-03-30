@@ -131,7 +131,7 @@ resource "vsphere_virtual_machine" "rhel-controller" {
 					- [systemctl, enable, kubelet]
 					- kubeadm init --control-plane-endpoint="master01:6443" --upload-certs --apiserver-cert-extra-sans=127.0.0.1,${local.worker_static}
 					- mkdir -p /home/${var.ssh_username}/.kube/
-					- cp /etc/kubernetes/admin.conf ${var.ssh_username}/.kube/config
+					- cp /etc/kubernetes/admin.conf /home/${var.ssh_username}/.kube/config
 					- chown -R ${var.ssh_username}:${var.ssh_username} /home/${var.ssh_username}/.kube/
 				EOF
     )
