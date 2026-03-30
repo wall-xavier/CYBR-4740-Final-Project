@@ -41,7 +41,8 @@ sudo firewall-cmd --permanent --add-port=6443/tcp
 sudo firewall-cmd --permanent --add-port=10250/tcp
 
 # Enable IP Forwarding
-sudo echo "1" > /proc/sys/net/ipv4/ip_forward
+echo "net.ipv4.ip_forward = 1" | sudo tee /etc/sysctl.d/99-ipforward.conf
+sudo sysctl --system
 
 # Install and enable Kubernetes
 sudo dnf install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
