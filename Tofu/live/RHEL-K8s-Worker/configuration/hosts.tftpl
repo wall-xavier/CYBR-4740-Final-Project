@@ -1,0 +1,9 @@
+127.0.0.1 localhost localhost.localdomain
+::1 localhost localhost.localdomain
+
+# Static mappings for the ${env_name} environment 
+
+${master_ip} master01.profos-systems.com master01
+%{~ for index, ip in worker_ips ~}
+${ip} worker-${index}.profos-systems.com worker-${index}
+%{~ end for ~}

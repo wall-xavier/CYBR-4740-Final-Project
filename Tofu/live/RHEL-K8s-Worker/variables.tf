@@ -99,43 +99,43 @@ variable "vm_folder" {
 variable "ip_netmask" {
 
   description = "The netmask to use for the VM network"
-  type = number
-  default = 24
+  type        = number
+  default     = 24
 
 }
 
 variable "env_networks" {
 
-	description = "The mapping of the networks for each environment"
-	type = map(object({
-		subnet = string
-		gateway = string
-		vm_network = string
-	}))
-	default = {
+  description = "The mapping of the networks for each environment"
+  type = map(object({
+    subnet     = string
+    gateway    = string
+    vm_network = string
+  }))
+  default = {
 
-		default = { 
-			subnet = "172.16.0.0/24"
-			gateway = "172.16.0.1" 
-			vm_network = "CYBR-4740-Project-Network-Default"
-		}
-		dev = { 
-			subnet = "172.16.1.0/24"
-			gateway = "172.16.1.1"
-			vm_network = "CYBR-4740-Project-Network-Dev"
-		} 
-		prod = { 
-			subnet = "172.16.2.0/24"
-			gateway = "172.16.2.1" 
-			vm_network = "CYBR-4740-Project-Network-Prod"
-		}
+    default = {
+      subnet     = "172.16.0.0/24"
+      gateway    = "172.16.0.1"
+      vm_network = "CYBR-4740-Project-Network-Default"
+    }
+    dev = {
+      subnet     = "172.16.1.0/24"
+      gateway    = "172.16.1.1"
+      vm_network = "CYBR-4740-Project-Network-Dev"
+    }
+    prod = {
+      subnet     = "172.16.2.0/24"
+      gateway    = "172.16.2.1"
+      vm_network = "CYBR-4740-Project-Network-Prod"
+    }
 
-	}
+  }
 }
 
 variable "ip_offset" {
 
-	description = "How many addresses off the base should be used for the IP"
-	type = number
-	default = 2
+  description = "How many addresses off the base should be used for the IP"
+  type        = number
+  default     = 2
 }

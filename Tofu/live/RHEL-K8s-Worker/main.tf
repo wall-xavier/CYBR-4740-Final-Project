@@ -8,6 +8,20 @@ provider "vsphere" {
 
 }
 
+locals {
+
+  current_worker_ips = [
+    for i in range(3) : cidrhost(var.env_networks[terraform.workspace].subnet, i + var.ip_offset)
+
+  ]
+
+  rendered_hosts = templatefile("${path.module}/configurations/hosts.tftpl", {
+    env_name  = terraform.workspace
+    master_ip = cidrhost(var.env_networks[terraform.workspace].subnet, 1)
+    worker_ip = local.current_worker_ips
+  })
+}
+
 resource "random_uuid" "vm_id" {
 
   count = var.machine_count
@@ -94,10 +108,23 @@ resource "vsphere_virtual_machine" "rhel-worker" {
       }
       network_interface {
 
-		ipv4_address = cidrhost(var.env_networks[terraform.workspace].subnet, count.index + var.ip_offset)
-		ipv4_netmask = var.ip_netmask
+        ipv4_address = cidrhost(var.env_networks[terraform.workspace].subnet, count.index + var.ip_offset)
+        ipv4_netmask = var.ip_netmask
       }
-	ipv4_gateway = var.env_networks[terraform.workspace].gateway
+      ipv4_gateway = var.env_networks[terraform.workspace].gateway
     }
+  }
+
+  extra_config = {
+    "user-data" = base64encode(<<-EOF
+			#cloud-config
+				write_files:
+					- path: /etc/hosts
+					  owner: root:root
+					  permissions: '0644'
+					  content: |
+					    ${indent(10, local.rendered_hosts)}
+				EOF
+    )
   }
 }

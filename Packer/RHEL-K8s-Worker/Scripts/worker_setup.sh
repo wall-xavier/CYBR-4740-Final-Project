@@ -51,5 +51,18 @@ sudo systemctl enable --now kubelet
 # Setup Vmware tools
 sudo dnf install -y open-vm-tools && sudo systemctl enable --now vmtoolsd
 
+# Install cloud-init for further customization
+sudo dnf install -y cloud-init
+sudo systemctl enable cloud-init-local.service
+sudo systemctl enable cloud-init.service
+sudo systemctl enable cloud-config.service
+sudo systemctl enable cloud-final.service
+
+sudo tee /etc/cloud/cloud.cfg.d/99-datasource.cfg << EOF
+datastore_list: [ VMware, OVF, ConfigDrive, None ]
+EOF
+
+sudo cloud-init clean --logs
+
 # Cleanup passwordless sudo authentication
 sudo rm -r /etc/sudoers.d/packer
