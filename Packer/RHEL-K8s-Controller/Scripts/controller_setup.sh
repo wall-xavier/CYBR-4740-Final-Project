@@ -49,7 +49,7 @@ sudo dnf install -y open-vm-tools && sudo systemctl enable --now vmtoolsd
 
 # Install VMware Cloud-Init plugins
 sudo dnf install -y python3-pip
-sudo python3 -m pip install cloud-init-vmare-guestinfo
+sudo python3 -m pip install cloud-init-vmware-guestinfo
 
 # Install cloud-init for further customization
 sudo dnf install -y cloud-init
