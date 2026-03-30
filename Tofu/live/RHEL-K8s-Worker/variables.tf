@@ -84,7 +84,7 @@ variable "vm_network" {
 
   description = "The network where the host will reside"
   type        = string
-  default     = "Updating Port Group"
+  default     = "CYBR-4740-Port-Group"
 
 }
 

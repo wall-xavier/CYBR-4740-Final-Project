@@ -41,7 +41,7 @@ source "vsphere-iso" "machine_template" {
   http_bind_address = var.bind_address
 
   http_content = {
-    "/worker.cfg" = templatefile("${path.root}/Scripts/controller.cfg", {
+    "/controller.cfg" = templatefile("${path.root}/Scripts/controller.cfg", {
       key            = var.RHEL_ACTIVATION_KEY
       org            = var.REDHAT_ORGID
       setup_user     = var.ssh_username
