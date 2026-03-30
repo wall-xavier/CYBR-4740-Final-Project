@@ -17,7 +17,7 @@ sudo sed -i 's/SystemdCgroup = false/SystemdCgroup = true/g' /etc/containerd/con
 sudo systemctl restart containerd && sudo systemctl enable containerd
 
 #Setup /etc/hosts
-echo "172.16.1.1 master01" | sudo tee -a /etc/hosts
+echo "127.0.0.1 localhost master01" | sudo tee -a /etc/hosts
 echo "172.16.1.2 worker01" | sudo tee -a /etc/hosts
 echo "172.16.1.3 worker02" | sudo tee -a /etc/hosts
 echo "172.16.1.4 worker03" | sudo tee -a /etc/hosts
@@ -31,8 +31,8 @@ sudo setenforce 0
 sudo sed -i 's/^SELINUX=enforcing$/SELINUC=permissive' /etc/selinux/config
 
 # Enabled Firewalld Rules
-sudo firewall-cmd --permanent --add-port=6443/tcp
-sudo firewall-cmd --permanent --add-port=10250/tcp
+sudo systemctl disable firewalld
+sudo systemctl stop firewalld
 
 # Get Kubernetes Repo
 cat << EOF | sudo tee /etc/yum.repos.d/kubernetes.repo

@@ -21,7 +21,7 @@ sudo swapoff -a
 sudo sed -i '/ swap / s/^/#/' /etc/fstab
 
 # Setup /etc/hosts
-echo "172.16.1.1 master01" | sudo tee -a /etc/hosts
+echo "127.0.0.1 localhost master01" | sudo tee -a /etc/hosts
 echo "172.16.1.2 worker01" | sudo tee -a /etc/hosts
 echo "172.16.1.3 worker02" | sudo tee -a /etc/hosts
 echo "172.16.1.4 worker03" | sudo tee -a /etc/hosts
@@ -37,8 +37,8 @@ gpgkey=https://pkgs.k8s.io/core:/stable:/v1.30/rpm/repodata/repomd.xml.key
 EOF
 
 # Enabled Firewalld Rules
-sudo firewall-cmd --permanent --add-port=6443/tcp
-sudo firewall-cmd --permanent --add-port=10250/tcp
+sudo systemctl disable firewalld
+sudo systemctl stop firewalld
 
 # Enable IP Forwarding
 echo "net.ipv4.ip_forward = 1" | sudo tee /etc/sysctl.d/99-ipforward.conf
