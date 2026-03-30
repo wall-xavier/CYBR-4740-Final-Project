@@ -143,6 +143,6 @@ variable "ip_offset" {
 variable "ssh_username" {
 
   description = "Username of the user to manage the machine"
-  type = string
+  type        = string
 
 }

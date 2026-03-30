@@ -118,7 +118,7 @@ resource "vsphere_virtual_machine" "rhel-worker" {
   }
 
   extra_config = {
-    "user-data" = base64encode(<<-EOF
+    "guestinfo.user-data" = base64encode(<<-EOF
 			#cloud-config
 				write_files:
 					- path: /etc/hosts
@@ -126,13 +126,15 @@ resource "vsphere_virtual_machine" "rhel-worker" {
 					  permissions: '0644'
 					  content: |
 					    ${indent(10, local.rendered_hosts)}
-				run_cmd:
+				runcmd:
 					- [systemctl, daemon-reload]
 					- [systemctl, enable, kubelet]
 					- kubeadm init --control-plane-endpoint="master01:6443" --upload-certs --apiserver-cert-extra-sans=127.0.0.1,${local.worker_static}
-					- mkdir -p ${var.ssh_username}/.kube/
+					- mkdir -p /home/${var.ssh_username}/.kube/
 					- cp /etc/kubernetes/admin.conf ${var.ssh_username}/.kube/config
+					- chown -R ${var.ssh_username}:{var.ssh_username} /home/${var.ssh_username}/.kube/
 				EOF
     )
+   "guestinfo.userdata.encoding" = "base64"
   }
 }

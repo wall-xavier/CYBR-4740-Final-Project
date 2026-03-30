@@ -116,7 +116,7 @@ resource "vsphere_virtual_machine" "rhel-worker" {
   }
 
   extra_config = {
-    "user-data" = base64encode(<<-EOF
+    "guest_info.user-data" = base64encode(<<-EOF
 			#cloud-config
 				write_files:
 					- path: /etc/hosts
@@ -124,10 +124,11 @@ resource "vsphere_virtual_machine" "rhel-worker" {
 					  permissions: '0644'
 					  content: |
 					    ${indent(10, local.rendered_hosts)}
-				run_cmd:
+				runcmd:
 					- [systemctl, daemon-reload]
 					- [systmctl, enable kubelet]
 				EOF
     )
+   "guest_info.user-data.encoding" = "base64"
   }
 }
