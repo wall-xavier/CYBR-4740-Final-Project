@@ -5,6 +5,6 @@ output "virtual_machine_name" {
 
     for i in range(var.machine_count) :
 
-    vsphere_virtual_machine.rhel-worker[i].name => vsphere_virtual_machine.rhel-worker[i].default_ip_address
+    vsphere_virtual_machine.rhel-controller[i].name => vsphere_virtual_machine.rhel-controller[i].default_ip_address
   }
 }

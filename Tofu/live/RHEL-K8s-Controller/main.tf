@@ -77,7 +77,7 @@ data "vsphere_virtual_machine" "template" {
 
 }
 
-resource "vsphere_virtual_machine" "rhel-worker" {
+resource "vsphere_virtual_machine" "rhel-controller" {
 
   count            = var.machine_count
   name             = "${var.vm_name}-${terraform.workspace}-${random_uuid.vm_id[count.index].result}"
@@ -118,7 +118,7 @@ resource "vsphere_virtual_machine" "rhel-worker" {
   }
 
   extra_config = {
-    "guestinfo.user-data" = base64encode(<<-EOF
+    "guestinfo.userdata" = base64encode(<<-EOF
 			#cloud-config
 				write_files:
 					- path: /etc/hosts
@@ -132,7 +132,7 @@ resource "vsphere_virtual_machine" "rhel-worker" {
 					- kubeadm init --control-plane-endpoint="master01:6443" --upload-certs --apiserver-cert-extra-sans=127.0.0.1,${local.worker_static}
 					- mkdir -p /home/${var.ssh_username}/.kube/
 					- cp /etc/kubernetes/admin.conf ${var.ssh_username}/.kube/config
-					- chown -R ${var.ssh_username}:{var.ssh_username} /home/${var.ssh_username}/.kube/
+					- chown -R ${var.ssh_username}:${var.ssh_username} /home/${var.ssh_username}/.kube/
 				EOF
     )
    "guestinfo.userdata.encoding" = "base64"
