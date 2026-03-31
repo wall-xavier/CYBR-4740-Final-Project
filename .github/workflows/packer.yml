@@ -34,7 +34,7 @@ jobs:
         run: |
          echo "ip=$(hostname -I | cut -d " " -f 1)" >> $GITHUB_OUTPUT
       - name: Packer Init
-        run: /usr/bin/packer --version
+        run: /usr/bin/packer init
 
       - name: Packer Format Check
         run: /usr/bin/packer fmt -check .
