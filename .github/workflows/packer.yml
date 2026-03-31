@@ -32,21 +32,21 @@ jobs:
       - name: Get Runner IP Address
         id: get_ip
         run: |
-          echo "USER=$(whoami)"
-          echo "HOME=$HOME"
-          pwd
+         echo "USER=$(whoami)"
+         echo "HOME=$HOME"
+         pwd
 
-          echo "---- ACTUAL HOME CONTENT ----"
-          ls -la /home/github || true
+         echo "---- ACTUAL HOME CONTENT ----"
+         ls -la /home/github || true
 
-          echo "---- PACKER PATHS ----"
-          find / -type d -name packer 2>/dev/null | head -20
+         echo "---- PACKER PATHS ----"
+         find / -type d -name packer 2>/dev/null | head -20
 
-          echo "---- SYSTEMD INFO ----"
-          ps aux | grep actions-runner | grep -v grep
+         echo "---- SYSTEMD INFO ----"
+         ps aux | grep actions-runner | grep -v grep
 
-          echo "---- ENV ----"
-          env | sort
+         echo "---- ENV ----"
+         env | sort
          whoami
          echo "HOME=$HOME"
          ls -R ~/.config/packer || echo "no plugins"
