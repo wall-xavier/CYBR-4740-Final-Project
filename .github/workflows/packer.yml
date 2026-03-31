@@ -21,7 +21,7 @@ jobs:
       PKR_VAR_password: ${{ secrets.VCENTER_PASSWORD }}
       PKR_VAR_vcenter_server: ${{ secrets.VCENTER_SERVER }}
       PKR_VAR_username: ${{ secrets.VCENTER_USERNAME }}
-      PKR_VAR_bind_address: ${{ secrets.RUNNER_IP }}
+      PKR_VAR_bind_address: $(hostname -I | cut -d " " -f 1)
     defaults:
       run:
         working-directory: ./Packer/${{ matrix.template }}
