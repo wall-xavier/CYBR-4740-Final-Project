@@ -118,6 +118,7 @@ resource "vsphere_virtual_machine" "rhel-controller" {
   }
 
   vapp {
+	properties{
     "user-data" = base64encode(<<-EOF
 			#cloud-config
 				write_files:
@@ -137,4 +138,5 @@ resource "vsphere_virtual_machine" "rhel-controller" {
     )
    "guestinfo.userdata.encoding" = "base64"
   }
+}
 }

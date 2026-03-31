@@ -116,8 +116,9 @@ resource "vsphere_virtual_machine" "github_runner" {
     }
   }
 
-  extra_config = {
-    "guest_info.user-data" = base64encode(<<-EOF
+  vapp = {
+	properties{
+    "user-data" = base64encode(<<-EOF
 			#cloud-config
 				runcmd:
 					- [systemctl, daemon-reload]
@@ -126,4 +127,5 @@ resource "vsphere_virtual_machine" "github_runner" {
     )
     "guest_info.user-data.encoding" = "base64"
   }
+}
 }
