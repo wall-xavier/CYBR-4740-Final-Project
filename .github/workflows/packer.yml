@@ -41,6 +41,8 @@ jobs:
         run: packer fmt -check .
 
       - name: Packer Validate
+        env: 
+          PKR_VAR_bind_address: ${{ steps.get_ip.outputs.ip }}
         run: packer validate .
 
       - name: Packer Build
