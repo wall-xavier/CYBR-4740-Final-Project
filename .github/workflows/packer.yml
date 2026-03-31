@@ -32,6 +32,10 @@ jobs:
       - name: Get Runner IP Address
         id: get_ip
         run: |
+         whoami
+         echo "HOME=$HOME"
+         ls -R ~/.config/packer || echo "no plugins"
+         packer version
          echo "ip=$(hostname -I | cut -d " " -f 1)" >> $GITHUB_OUTPUT
          pwd
          ls -la

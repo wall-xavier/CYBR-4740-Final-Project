@@ -13,7 +13,6 @@ cd actions-runner/
 curl -o actions-runner-linux-x64-2.333.1.tar.gz -L https://github.com/actions/runner/releases/download/v2.333.1/actions-runner-linux-x64-2.333.1.tar.gz
 tar xzf ./actions-runner-linux-x64-2.333.1.tar.gz
 sudo ./bin/installdependencies.sh
-sudo cp run.sh /usr/local/bin/github_run
 
 # Install VMware tools
 sudo dnf install -y open-vm-tools && sudo systemctl enable --now vmtoolsd
