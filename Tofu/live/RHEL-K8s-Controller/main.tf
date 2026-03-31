@@ -89,6 +89,7 @@ resource "vsphere_virtual_machine" "rhel-controller" {
   scsi_type        = data.vsphere_virtual_machine.template.scsi_type
   firmware         = data.vsphere_virtual_machine.template.firmware
   folder           = vsphere_folder.env_folder.path
+  vapp_options     = true
 
   network_interface {
     network_id   = data.vsphere_network.network.id
