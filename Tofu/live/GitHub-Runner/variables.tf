@@ -114,7 +114,7 @@ variable "vm_network1" {
 
   description = "The network the host will reside on"
   type        = string
-  default     = "Profos-ISP Port Group"
+  default     = "Profos ISP Port Group"
 
 }
 
@@ -122,7 +122,7 @@ variable "subnet" {
 
   description = "The subnet of the static interface"
   type        = string
-  default     = "10.0.10.0"
+  default     = "10.0.10.0/24"
 
 }
 
