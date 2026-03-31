@@ -115,7 +115,8 @@ resource "vsphere_virtual_machine" "rhel-worker" {
     }
   }
 
-  extra_config = {
+  vapp {
+    properties = {
     "guest_info.user-data" = base64encode(<<-EOF
 			#cloud-config
 				write_files:
@@ -131,4 +132,5 @@ resource "vsphere_virtual_machine" "rhel-worker" {
     )
    "guest_info.user-data.encoding" = "base64"
   }
+}
 }
