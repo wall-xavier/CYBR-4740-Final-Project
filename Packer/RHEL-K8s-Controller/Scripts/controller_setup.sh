@@ -54,12 +54,8 @@ sudo systemctl enable cloud-init.service
 sudo systemctl enable cloud-config.service
 sudo systemctl enable cloud-final.service
 
-sudo dnf install -y git python3-pip
-
-curl -sSL https://raw.githubusercontent.com/vmware/cloud-init-vmware-guestinfo/master/install.sh | sudo sh -
-
 sudo tee /etc/cloud/cloud.cfg.d/99-datasource.cfg << EOF
-datastore_list: [ VMwareGuestInfo , None ]
+datasource_list: [ VMware ]
 EOF
 
 sudo cloud-init clean --logs

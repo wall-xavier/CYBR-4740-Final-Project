@@ -143,8 +143,29 @@ variable "ip_offset" {
 
 variable "gateway" {
 
-	description = "Gateway of the static network"
-	type = string
-	default = "10.0.10.1"
+  description = "Gateway of the static network"
+  type        = string
+  default     = "10.0.10.1"
+
+}
+
+variable "github_token" {
+
+  description = "Token used to authenticate runner to Github"
+  type        = string
+
+}
+
+variable "vsphere_server_ip"{
+
+  description = "IP Address of the VSphere Server"
+  type = string
+
+}
+
+variable "vsphere_host_ip" {
+
+  description = "IP address of the VSphere Host"
+  type = string
 
 }

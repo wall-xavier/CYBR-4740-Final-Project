@@ -11,9 +11,9 @@ sudo mkdir actions-runner
 sudo chown -R github:github actions-runner/
 cd actions-runner/
 curl -o actions-runner-linux-x64-2.333.1.tar.gz -L https://github.com/actions/runner/releases/download/v2.333.1/actions-runner-linux-x64-2.333.1.tar.gz
-echo "18f8f68ed1892854ff2ab1bab4fcaa2f5abeedc98093b6cb13638991725cab74  actions-runner-linux-x64-2.333.1.tar.gz" | shasum -a 256 -c
 tar xzf ./actions-runner-linux-x64-2.333.1.tar.gz
 sudo ./bin/installdependencies.sh
+sudo cp run.sh /usr/local/bin/github_run
 
 # Install VMware tools
 sudo dnf install -y open-vm-tools && sudo systemctl enable --now vmtoolsd
@@ -26,7 +26,7 @@ sudo systemctl enable cloud-config.service
 sudo systemctl enable cloud-final.service
 
 sudo tee /etc/cloud/cloud.cfg.d/99-datasource.cfg << EOF
-datastore_list: [ VMware, OVF, ConfigDrive, None ]
+datasource_list: [ VMware ]
 EOF
 
 sudo cloud-init clean --logs

@@ -98,34 +98,48 @@ resource "vsphere_virtual_machine" "github_runner" {
 
   clone {
     template_uuid = data.vsphere_virtual_machine.template.id
-    customize {
-      linux_options {
-        host_name = "${var.vm_name}-${random_uuid.vm_id[count.index].result}"
-        domain    = var.vm_domain_name
-      }
-
-      network_interface {
-
-      }
-      network_interface {
-
-        ipv4_address = cidrhost(var.subnet, count.index + var.ip_offset)
-        ipv4_netmask = var.netmask
-      }
-      ipv4_gateway = var.gateway
-    }
   }
 
-  vapp {
-	properties = {
-    "user-data" = base64encode(<<-EOF
-			#cloud-config
-				runcmd:
-					- [systemctl, daemon-reload]
-					- [systmctl, enable kubelet]
-				EOF
+  extra_config = {
+    "guestinfo.userdata" = base64encode(<<-EOF
+#cloud-config
+write_files:
+  - path: /lib/systemd/system/github_runner.service
+    owner: root:root
+    permissions: '0644'
+    content: |
+      [Unit]
+      Description=Manage the lifecycle of the Github runner
+      After=network.target
+     
+      [Service]
+      Type=simple
+      Restart=always
+      RestartSec=60
+      User=github
+      ExecStart=/usr/src/actions-runner/run.sh
+
+      [Install]
+      WantedBy=multi-user.target
+
+  - path: /etc/hosts
+    owner: root:root
+    permissions: '0644'
+    content: |
+      127.0.0.1 localhost
+      ::1 localhost
+      ${var.vsphere_server_ip} ${var.vsphere_server}
+      ${var.vsphere_host_ip}  ${var.vsphere_host}
+
+runcmd:
+  - [sudo , -u , github, /usr/src/actions-runner/config.sh, --unattended ,--url , "https://github.com/wall-xavier/CYBR-4740-Final-Project", --token ,"${var.github_token}", --name ,"${var.vm_host_name}-${random_uuid.vm_id[count.index].result}"]
+  - [systemctl, start, github_runner.service]
+  - [systemctl, enable, github_runner.service]
+  - [nmcli, c, add, con-name, "Interal", ipv4.method, static, ipv4.address, "${cidrhost(var.subnet, count.index + var.ip_offset)}/${var.ip_netmask}", ifname, ens192, type, ethernet]
+  - [hostnamectl, set-hostname, "${var.vm_host_name}-${random_uuid.vm_id[count.index].result}"]
+  - [reboot]
+EOF
     )
-    "guest_info.user-data.encoding" = "base64"
+    "guestinfo.userdata.encoding" = "base64"
   }
-}
 }

@@ -52,7 +52,7 @@ sudo systemctl enable cloud-config.service
 sudo systemctl enable cloud-final.service
 
 sudo tee /etc/cloud/cloud.cfg.d/99-datasource.cfg << EOF
-datastore_list: [ VMware, OVF, ConfigDrive, None ]
+datasource_list: [ VMware ]
 EOF
 
 sudo cloud-init clean --logs
