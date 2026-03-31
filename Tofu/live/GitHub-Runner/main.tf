@@ -8,22 +8,6 @@ provider "vsphere" {
 
 }
 
-locals {
-
-  current_worker_ips = [
-    for i in range(3) : cidrhost(var.env_networks[terraform.workspace].subnet, i + 2)
-
-  ]
-
-  worker_static = cidrhost(var.env_networks[terraform.workspace].subnet, 1)
-
-  rendered_hosts = templatefile("${path.module}/configuration/hosts.tftpl", {
-    env_name  = terraform.workspace
-    master_ip = cidrhost(var.env_networks[terraform.workspace].subnet, 1)
-    worker_ip = local.current_worker_ips
-  })
-}
-
 resource "random_uuid" "vm_id" {
 
   count = var.machine_count
@@ -65,7 +49,14 @@ data "vsphere_datastore" "datastore" {
 
 data "vsphere_network" "network" {
 
-  name          = var.env_networks[terraform.workspace].vm_network
+  name          = var.vm_network
+  datacenter_id = data.vsphere_datacenter.datacenter.id
+
+}
+
+data "vsphere_network" "network1" {
+
+  name          = var.vm_network1
   datacenter_id = data.vsphere_datacenter.datacenter.id
 
 }
@@ -77,10 +68,10 @@ data "vsphere_virtual_machine" "template" {
 
 }
 
-resource "vsphere_virtual_machine" "rhel-controller" {
+resource "vsphere_virtual_machine" "github_runner" {
 
   count            = var.machine_count
-  name             = "${var.vm_name}-${terraform.workspace}-${random_uuid.vm_id[count.index].result}"
+  name             = "${var.vm_name}-${random_uuid.vm_id[count.index].result}"
   resource_pool_id = data.vsphere_host.host.resource_pool_id
   datastore_id     = data.vsphere_datastore.datastore.id
   num_cpus         = var.vm_cpus
@@ -95,6 +86,10 @@ resource "vsphere_virtual_machine" "rhel-controller" {
     adapter_type = data.vsphere_virtual_machine.template.network_interface_types[0]
   }
 
+  network_interface {
+    network_id   = data.vsphere_network.network1.id
+    adapter_type = data.vsphere_virtual_machine.template.network_interface_types[0]
+  }
   disk {
     label            = "disk0"
     size             = data.vsphere_virtual_machine.template.disks.0.size
@@ -105,36 +100,30 @@ resource "vsphere_virtual_machine" "rhel-controller" {
     template_uuid = data.vsphere_virtual_machine.template.id
     customize {
       linux_options {
-        host_name = "${var.vm_name}-${terraform.workspace}-${random_uuid.vm_id[count.index].result}"
+        host_name = "${var.vm_name}-${random_uuid.vm_id[count.index].result}"
         domain    = var.vm_domain_name
+      }
+
+      network_interface {
+
       }
       network_interface {
 
-        ipv4_address = cidrhost(var.env_networks[terraform.workspace].subnet, count.index + var.ip_offset)
-        ipv4_netmask = var.ip_netmask
+        ipv4_address = cidrhost(var.subnet, count.index + var.ip_offset)
+        ipv4_netmask = var.netmask
       }
-      ipv4_gateway = var.env_networks[terraform.workspace].gateway
+      ipv4_gateway = var.gateway
     }
   }
 
-  vapp {
-    "user-data" = base64encode(<<-EOF
+  extra_config = {
+    "guest_info.user-data" = base64encode(<<-EOF
 			#cloud-config
-				write_files:
-					- path: /etc/hosts
-					  owner: root:root
-					  permissions: '0644'
-					  content: |
-					    ${indent(10, local.rendered_hosts)}
 				runcmd:
 					- [systemctl, daemon-reload]
-					- [systemctl, enable, kubelet]
-					- kubeadm init --control-plane-endpoint="master01:6443" --upload-certs --apiserver-cert-extra-sans=127.0.0.1,${local.worker_static}
-					- mkdir -p /home/${var.ssh_username}/.kube/
-					- cp /etc/kubernetes/admin.conf /home/${var.ssh_username}/.kube/config
-					- chown -R ${var.ssh_username}:${var.ssh_username} /home/${var.ssh_username}/.kube/
+					- [systmctl, enable kubelet]
 				EOF
     )
-   "guestinfo.userdata.encoding" = "base64"
+    "guest_info.user-data.encoding" = "base64"
   }
 }

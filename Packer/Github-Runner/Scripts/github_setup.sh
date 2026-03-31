@@ -7,8 +7,9 @@ sudo yum -y install packer
 
 # Install Github tools
 cd /usr/src/
-sudo mkdir actions-runner && cd actions-runner
+sudo mkdir actions-runner
 sudo chown -R github:github actions-runner/
+cd actions-runner/
 curl -o actions-runner-linux-x64-2.333.1.tar.gz -L https://github.com/actions/runner/releases/download/v2.333.1/actions-runner-linux-x64-2.333.1.tar.gz
 echo "18f8f68ed1892854ff2ab1bab4fcaa2f5abeedc98093b6cb13638991725cab74  actions-runner-linux-x64-2.333.1.tar.gz" | shasum -a 256 -c
 tar xzf ./actions-runner-linux-x64-2.333.1.tar.gz
@@ -16,10 +17,6 @@ sudo ./bin/installdependencies.sh
 
 # Install VMware tools
 sudo dnf install -y open-vm-tools && sudo systemctl enable --now vmtoolsd
-
-# Install VMware Cloud-Init plugins
-sudo dnf install -y python3-pip git
-sudo pip3 install https://github.com/vmware/cloud-init-vmware-guestinfo/archive/master.zip
 
 # Install cloud-init for further customization
 sudo dnf install -y cloud-init
@@ -29,11 +26,8 @@ sudo systemctl enable cloud-config.service
 sudo systemctl enable cloud-final.service
 
 sudo tee /etc/cloud/cloud.cfg.d/99-datasource.cfg << EOF
-datastore_list: [ VMware, OVF, ConfigDrive, , VMwareGuestInfo, None ]
+datastore_list: [ VMware, OVF, ConfigDrive, None ]
 EOF
-
-# Install VMware Cloud-Init plugins
-yum install https://github.com/vmware/cloud-init-vmware-guestinfo/releases/download/v1.1.0/cloud-init-vmware-guestinfo-1.1.0-1.el7.noarch.rpm
 
 sudo cloud-init clean --logs
 

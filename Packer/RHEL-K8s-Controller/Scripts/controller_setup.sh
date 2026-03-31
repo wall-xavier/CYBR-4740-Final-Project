@@ -54,12 +54,10 @@ sudo systemctl enable cloud-init.service
 sudo systemctl enable cloud-config.service
 sudo systemctl enable cloud-final.service
 
-sudo tee /etc/cloud/cloud.cfg.d/99-datasource.cfg << EOF
-datastore_list: [ VMware, OVF, ConfigDrive, , VMwareGuestInfo, None ]
-EOF
 
-# Install VMware Cloud-Init plugins
-yum install https://github.com/vmware/cloud-init-vmware-guestinfo/releases/download/v1.1.0/cloud-init-vmware-guestinfo-1.1.0-1.el7.noarch.rpm
+sudo tee /etc/cloud/cloud.cfg.d/99-datasource.cfg << EOF
+datastore_list: [ VMware, OVF, ConfigDrive, None ]
+EOF
 
 sudo cloud-init clean --logs
 
