@@ -37,14 +37,14 @@ jobs:
         run: /usr/bin/packer --version
 
       - name: Packer Format Check
-        run: packer fmt -check .
+        run: /usr/bin/packer fmt -check .
 
       - name: Packer Validate
         env: 
           PKR_VAR_bind_address: ${{ steps.get_ip.outputs.ip }}
-        run: packer validate .
+        run: /usr/bin/packer validate .
 
       - name: Packer Build
         env: 
           PKR_VAR_bind_address: ${{ steps.get_ip.outputs.ip }}
-        run: packer build -force .
+        run: /usr/bin/packer build -force .
