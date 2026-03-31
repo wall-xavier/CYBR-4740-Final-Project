@@ -21,13 +21,18 @@ jobs:
       PKR_VAR_password: ${{ secrets.VCENTER_PASSWORD }}
       PKR_VAR_vcenter_server: ${{ secrets.VCENTER_SERVER }}
       PKR_VAR_username: ${{ secrets.VCENTER_USERNAME }}
-      PKR_VAR_bind_address: ${{ $(hostname -I | cut -d " " -f 1) }}
     defaults:
       run:
         working-directory: ./Packer/${{ matrix.template }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+
+
+      - name: Get Runner IP Address
+      - id: get_ip
+      - run: |
+         echo "ip=$(hostname -I | cut -d " " -f 1)" >> $GITHUB_OUTPUT
 
       - name: Packer Init
         run: packer init .
@@ -39,4 +44,6 @@ jobs:
         run: packer validate .
 
       - name: Packer Build
+        env: 
+          PKR_VAR_bind_address: ${{ steps.get_ip.outputs.ip }}
         run: packer build -force .
