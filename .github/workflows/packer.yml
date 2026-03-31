@@ -34,6 +34,7 @@ jobs:
         run: |
          echo "ip=$(hostname -I | cut -d " " -f 1)" >> $GITHUB_OUTPUT
          pwd
+         ls -la
       - name: Packer Init
         run: packer init .
 
