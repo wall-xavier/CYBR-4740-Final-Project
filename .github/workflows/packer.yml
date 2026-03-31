@@ -30,8 +30,8 @@ jobs:
 
 
       - name: Get Runner IP Address
-      - id: get_ip
-      - run: |
+        id: get_ip
+        run: |
          echo "ip=$(hostname -I | cut -d " " -f 1)" >> $GITHUB_OUTPUT
 
       - name: Packer Init
