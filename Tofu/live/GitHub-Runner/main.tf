@@ -116,8 +116,8 @@ resource "vsphere_virtual_machine" "github_runner" {
     }
   }
 
-  vapp = {
-	properties{
+  vapp {
+	properties = {
     "user-data" = base64encode(<<-EOF
 			#cloud-config
 				runcmd:

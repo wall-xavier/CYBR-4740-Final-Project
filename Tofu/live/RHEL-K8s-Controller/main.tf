@@ -118,7 +118,7 @@ resource "vsphere_virtual_machine" "rhel-controller" {
   }
 
   vapp {
-	properties{
+	properties = {
     "user-data" = base64encode(<<-EOF
 			#cloud-config
 				write_files:
