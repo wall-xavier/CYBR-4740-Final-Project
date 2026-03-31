@@ -12,7 +12,7 @@ jobs:
     runs-on: self-hosted
     strategy:
       matrix:
-        template: ["RHEL-K8s-Worker", "RHEL-K8s-Controller"]
+        template: ["RHEL-K8s-Controller"]
     env:
       PKR_VAR_REDHAT_ORGID: ${{ secrets.REDHAT_ORGID }}
       PKR_VAR_RHEL_ACTIVATION_KEY: ${{ secrets.RHEL_ACTIVATION_KEY }}

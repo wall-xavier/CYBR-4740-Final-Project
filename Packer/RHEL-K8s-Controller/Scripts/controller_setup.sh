@@ -47,10 +47,6 @@ sudo kubeadm config images pull
 # Setup Vmware tools
 sudo dnf install -y open-vm-tools && sudo systemctl enable --now vmtoolsd
 
-# Install VMware Cloud-Init plugins
-sudo dnf install -y python3-pip git
-sudo pip3 install https://github.com/vmware/cloud-init-vmware-guestinfo/archive/master.zip
-
 # Install cloud-init for further customization
 sudo dnf install -y cloud-init
 sudo systemctl enable cloud-init-local.service
@@ -62,8 +58,10 @@ sudo tee /etc/cloud/cloud.cfg.d/99-datasource.cfg << EOF
 datastore_list: [ VMware, OVF, ConfigDrive, , VMwareGuestInfo, None ]
 EOF
 
-sudo cloud-init clean --logs
+# Install VMware Cloud-Init plugins
+yum install https://github.com/vmware/cloud-init-vmware-guestinfo/releases/download/v1.1.0/cloud-init-vmware-guestinfo-1.1.0-1.el7.noarch.rpm
 
+sudo cloud-init clean --logs
 
 # Cleanup passwordless sudo authentication
 sudo rm -r /etc/sudoers.d/packer
