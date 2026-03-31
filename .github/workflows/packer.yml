@@ -32,30 +32,9 @@ jobs:
       - name: Get Runner IP Address
         id: get_ip
         run: |
-         echo "USER=$(whoami)"
-         echo "HOME=$HOME"
-         pwd
-
-         echo "---- ACTUAL HOME CONTENT ----"
-         ls -la /home/github || true
-
-         echo "---- PACKER PATHS ----"
-         find / -type d -name packer 2>/dev/null | head -20
-
-         echo "---- SYSTEMD INFO ----"
-         ps aux | grep actions-runner | grep -v grep
-
-         echo "---- ENV ----"
-         env | sort
-         whoami
-         echo "HOME=$HOME"
-         ls -R ~/.config/packer || echo "no plugins"
-         packer version
          echo "ip=$(hostname -I | cut -d " " -f 1)" >> $GITHUB_OUTPUT
-         pwd
-         ls -la
       - name: Packer Init
-        run: packer init .
+        run: /usr/bin/packer --version
 
       - name: Packer Format Check
         run: packer fmt -check .
