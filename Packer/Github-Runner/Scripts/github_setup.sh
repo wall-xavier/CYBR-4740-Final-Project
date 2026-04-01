@@ -24,6 +24,7 @@ sudo systemctl enable cloud-init.service
 sudo systemctl enable cloud-config.service
 sudo systemctl enable cloud-final.service
 
+# Enable VMware Datastore
 sudo tee /etc/cloud/cloud.cfg.d/99-datasource.cfg << EOF
 datasource_list: [ VMware ]
 EOF
