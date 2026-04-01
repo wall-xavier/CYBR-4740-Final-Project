@@ -70,6 +70,13 @@ data "vsphere_network" "network" {
 
 }
 
+data "vsphere_network" "network1" {
+
+  name          = "Updating Port Group"
+  datacenter_id = data.vsphere_datacenter.datacenter.id
+
+}
+
 data "vsphere_virtual_machine" "template" {
 
   name          = var.vm_template
@@ -95,6 +102,15 @@ resource "vsphere_virtual_machine" "rhel-controller" {
     adapter_type = data.vsphere_virtual_machine.template.network_interface_types[0]
   }
 
+network_interface {
+    
+    network_id   = data.vsphere_network.network1.id
+    adapter_type = data.vsphere_virtual_machine.template.network_interface_types[0]
+
+}
+
+  
+
   disk {
     label            = "disk0"
     size             = data.vsphere_virtual_machine.template.disks.0.size
@@ -117,16 +133,18 @@ write_files:
 runcmd:
   - [systemctl, daemon-reload]
   - [systemctl, enable, kubelet]
-  - nmcli c mod "System ens160" ipv4.method static ipv4.address ${cidrhost(var.env_networks[terraform.workspace].subnet, count.index + var.ip_offset)}/${var.ip_netmask} ipv4.gateway ${var.env_networks[terraform.workspace].gateway} ifname ens160
+  - nmcli c mod "System ens160" ipv4.method static ipv4.address ${cidrhost(var.env_networks[terraform.workspace].subnet, count.index + var.ip_offset)}/${var.ip_netmask}  ifname ens160
   - nmcli c up "System ens160"
+  - nmcli c add con-name "Internet" ipv4.method auto type ethernet ifname ens192
+  - nmcli c up "Internet"
   - sleep 5
   - hostnamectl set-hostname ${var.vm_host_name}-${terraform.workspace}-${random_uuid.vm_id[count.index].result}
-  - kubeadm init --control-plane-endpoint="master01:6443" --upload-certs --apiserver-cert-extra-sans=127.0.0.1,${local.worker_static}
+  - kubeadm init --control-plane-endpoint="master01:6443" --upload-certs --apiserver-cert-extra-sans="127.0.0.1,${local.worker_static}" 
   - mkdir -p "/home/${var.ssh_username}/.kube/"
   - cp /etc/kubernetes/admin.conf /home/${var.ssh_username}/.kube/config
   - chown -R ${var.ssh_username}:${var.ssh_username} /home/${var.ssh_username}/.kube/
 EOF
     )
-   "guestinfo.userdata.encoding" = "base64"
+    "guestinfo.userdata.encoding" = "base64"
   }
 }

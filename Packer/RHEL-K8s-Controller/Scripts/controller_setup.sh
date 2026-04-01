@@ -45,9 +45,6 @@ sudo sysctl --system
 # Install and enable Kubernetes
 sudo dnf install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
 
-# Get Kubernetes images
-sudo kubeadm config images pull
-
 # Setup Vmware tools
 sudo dnf install -y open-vm-tools && sudo systemctl enable --now vmtoolsd
 
