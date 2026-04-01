@@ -104,40 +104,28 @@ resource "vsphere_virtual_machine" "rhel-controller" {
 
   clone {
     template_uuid = data.vsphere_virtual_machine.template.id
-    customize {
-      linux_options {
-        host_name = "${var.vm_name}-${terraform.workspace}-${random_uuid.vm_id[count.index].result}"
-        domain    = var.vm_domain_name
-      }
-      network_interface {
-
-        ipv4_address = cidrhost(var.env_networks[terraform.workspace].subnet, count.index + var.ip_offset)
-        ipv4_netmask = var.ip_netmask
-      }
-      ipv4_gateway = var.env_networks[terraform.workspace].gateway
-    }
   }
 
-  vapp {
-	properties = {
-    "user-data" = base64encode(<<-EOF
-			#cloud-config
-				write_files:
-					- path: /etc/hosts
-					  owner: root:root
-					  permissions: '0644'
-					  content: |
-					    ${indent(10, local.rendered_hosts)}
-				runcmd:
-					- [systemctl, daemon-reload]
-					- [systemctl, enable, kubelet]
-					- kubeadm init --control-plane-endpoint="master01:6443" --upload-certs --apiserver-cert-extra-sans=127.0.0.1,${local.worker_static}
-					- mkdir -p /home/${var.ssh_username}/.kube/
-					- cp /etc/kubernetes/admin.conf /home/${var.ssh_username}/.kube/config
-					- chown -R ${var.ssh_username}:${var.ssh_username} /home/${var.ssh_username}/.kube/
-				EOF
+  extra_info {
+    "guestinfo.userdata" = base64encode(<<-EOF
+#cloud-config
+write_files:
+  - path: /etc/hosts
+    owner: root:root
+    permissions: '0644'
+    content: |
+      ${indent(10, local.rendered_hosts)}
+runcmd:
+  - [systemctl, daemon-reload]
+  - [systemctl, enable, kubelet]
+  - kubeadm init --control-plane-endpoint="master01:6443" --upload-certs --apiserver-cert-extra-sans=127.0.0.1,${local.worker_static}
+  - mkdir -p /home/${var.ssh_username}/.kube/
+  - cp /etc/kubernetes/admin.conf /home/${var.ssh_username}/.kube/config
+  - chown -R ${var.ssh_username}:${var.ssh_username} /home/${var.ssh_username}/.kube/
+  - hostnamectl set-hostname ${var.vm_host_name}-${terraform.workspace}-${random_uuid.vm_id[count.index].result}
+  - nmcli c mod "System ens160" ipv4.method static ipv4.address ${cidrhost(var.env_networks[terraform.workspace].subnet, count.index + var.ip_offset)/${var.ip_netmask}} ipv4.gateway ${var.env_networks[terraform.workspace].gateway} 
+EOF
     )
    "guestinfo.userdata.encoding" = "base64"
   }
-}
 }

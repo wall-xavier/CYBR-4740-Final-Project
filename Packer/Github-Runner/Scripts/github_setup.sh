@@ -31,5 +31,9 @@ EOF
 
 sudo cloud-init clean --logs
 
+# Disable Firewall to allow the runner to deploy an HTTP server anywhere
+sudo systemctl stop firewalld
+sudo systemctl disable firewalld
+
 # Cleanup passwordless sudo authentication
 sudo rm -r /etc/sudoers.d/packer
