@@ -123,7 +123,7 @@ variable "network_card_type" {
 variable "post_install_script" {
 
   type    = string
-  default = "Scripts/github_setup.sh"
+  default = "Scripts/runner_setup.sh"
 
 }
 

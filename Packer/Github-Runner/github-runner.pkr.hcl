@@ -41,7 +41,7 @@ source "vsphere-iso" "machine_template" {
   http_bind_address = var.bind_address
 
   http_content = {
-    "/github.cfg" = templatefile("${path.root}/Scripts/github.cfg", {
+    "/github.cfg" = templatefile("${path.root}/Scripts/runner.cfg", {
       key            = var.RHEL_ACTIVATION_KEY
       org            = var.REDHAT_ORGID
       setup_user     = var.setup_username
