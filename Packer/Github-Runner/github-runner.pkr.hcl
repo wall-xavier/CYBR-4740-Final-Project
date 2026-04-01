@@ -44,16 +44,16 @@ source "vsphere-iso" "machine_template" {
     "/github.cfg" = templatefile("${path.root}/Scripts/github.cfg", {
       key            = var.RHEL_ACTIVATION_KEY
       org            = var.REDHAT_ORGID
-      setup_user     = var.ssh_username
-      setup_password = var.ssh_password
+      setup_user     = var.setup_username
+      setup_password = var.setup_password
     })
   }
 
   boot_wait    = "5s"
   boot_command = var.boot_commands
 
-  ssh_username = var.ssh_username
-  ssh_password = var.ssh_password
+  ssh_username = var.setup_username
+  ssh_password = var.setup_password
 
   convert_to_template = var.template
 

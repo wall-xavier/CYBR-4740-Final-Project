@@ -16,13 +16,13 @@ variable "vcenter_server" {
 
 }
 
-variable "ssh_username" {
+variable "setup_username" {
 
   type = string
 
 }
 
-variable "ssh_password" {
+variable "setup_password" {
 
   type = string
 
