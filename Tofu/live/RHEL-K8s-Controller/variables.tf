@@ -137,7 +137,7 @@ variable "ip_offset" {
 
   description = "How many addresses off the base should be used for the IP"
   type        = number
-  default     = 1
+  default     = 2
 }
 
 variable "ssh_username" {

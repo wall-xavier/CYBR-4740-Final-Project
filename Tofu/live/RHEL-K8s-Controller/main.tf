@@ -11,15 +11,15 @@ provider "vsphere" {
 locals {
 
   current_worker_ips = [
-    for i in range(3) : cidrhost(var.env_networks[terraform.workspace].subnet, i + 2)
+    for i in range(3) : cidrhost(var.env_networks[terraform.workspace].subnet, i + 3)
 
   ]
 
-  worker_static = cidrhost(var.env_networks[terraform.workspace].subnet, 1)
+  worker_static = cidrhost(var.env_networks[terraform.workspace].subnet, 2)
 
   rendered_hosts = templatefile("${path.module}/configuration/hosts.tftpl", {
     env_name  = terraform.workspace
-    master_ip = cidrhost(var.env_networks[terraform.workspace].subnet, 1)
+    master_ip = cidrhost(var.env_networks[terraform.workspace].subnet, 2)
     worker_ip = local.current_worker_ips
   })
 }
@@ -89,7 +89,6 @@ resource "vsphere_virtual_machine" "rhel-controller" {
   scsi_type        = data.vsphere_virtual_machine.template.scsi_type
   firmware         = data.vsphere_virtual_machine.template.firmware
   folder           = vsphere_folder.env_folder.path
-  vapp_options     = true
 
   network_interface {
     network_id   = data.vsphere_network.network.id
@@ -106,7 +105,7 @@ resource "vsphere_virtual_machine" "rhel-controller" {
     template_uuid = data.vsphere_virtual_machine.template.id
   }
 
-  extra_info {
+  extra_config = {
     "guestinfo.userdata" = base64encode(<<-EOF
 #cloud-config
 write_files:
@@ -114,16 +113,18 @@ write_files:
     owner: root:root
     permissions: '0644'
     content: |
-      ${indent(10, local.rendered_hosts)}
+      ${indent(6, local.rendered_hosts)}
 runcmd:
   - [systemctl, daemon-reload]
   - [systemctl, enable, kubelet]
+  - nmcli c mod "System ens160" ipv4.method static ipv4.address ${cidrhost(var.env_networks[terraform.workspace].subnet, count.index + var.ip_offset)}/${var.ip_netmask} ipv4.gateway ${var.env_networks[terraform.workspace].gateway} ifname ens160
+  - nmcli c up "System ens160"
+  - sleep 5
+  - hostnamectl set-hostname ${var.vm_host_name}-${terraform.workspace}-${random_uuid.vm_id[count.index].result}
   - kubeadm init --control-plane-endpoint="master01:6443" --upload-certs --apiserver-cert-extra-sans=127.0.0.1,${local.worker_static}
-  - mkdir -p /home/${var.ssh_username}/.kube/
+  - mkdir -p "/home/${var.ssh_username}/.kube/"
   - cp /etc/kubernetes/admin.conf /home/${var.ssh_username}/.kube/config
   - chown -R ${var.ssh_username}:${var.ssh_username} /home/${var.ssh_username}/.kube/
-  - hostnamectl set-hostname ${var.vm_host_name}-${terraform.workspace}-${random_uuid.vm_id[count.index].result}
-  - nmcli c mod "System ens160" ipv4.method static ipv4.address ${cidrhost(var.env_networks[terraform.workspace].subnet, count.index + var.ip_offset)/${var.ip_netmask}} ipv4.gateway ${var.env_networks[terraform.workspace].gateway} 
 EOF
     )
    "guestinfo.userdata.encoding" = "base64"

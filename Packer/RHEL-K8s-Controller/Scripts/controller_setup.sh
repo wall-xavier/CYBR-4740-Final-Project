@@ -12,9 +12,13 @@ sudo dnf install -y containerd.io docker-ce docker-ce-cli containerd.io docker-b
 sudo systemctl enable docker
 
 # Setup Containerd
-containerd config default | sudo tee /etc/containerd/config.toml >/dev/null
+sudo mkdir -p /etc/containerd
+containerd config default | sudo tee /etc/containerd/config.toml > /dev/null
 sudo sed -i 's/SystemdCgroup = false/SystemdCgroup = true/g' /etc/containerd/config.toml
-sudo systemctl restart containerd && sudo systemctl enable containerd
+
+# Ensure the CRI plugin is not disabled 
+sudo sed -i 's/disabled_plugins = \[.*/disabled_plugins = \[\]/g' /etc/containerd/config.toml
+sudo systemctl restart containerd
 
 # Disable swap
 sudo swapoff -a
