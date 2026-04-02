@@ -28,6 +28,18 @@ sudo sed -i 's/^SELINUX=enforcing$/SELINUC=permissive' /etc/selinux/config
 sudo systemctl disable firewalld
 sudo systemctl stop firewalld
 
+# Setup IP Forwarding
+sudo modprobe br_netfilter
+sudo echo  "br_netfilter" > /etc/modules-load.d/k8s.conf
+sudo cat <<EOF > /etc/sysctl.d/k8s.conf
+net.bridge.bridge-nf-call-iptables = 1
+net.bridge.bridge-nf-call-ip6tables = 1
+net.ipv4.ip_forward = 1
+EOF
+
+sudo sysctl --system
+
+
 # Get Kubernetes Repo
 cat << EOF | sudo tee /etc/yum.repos.d/kubernetes.repo
 [kubernetes]

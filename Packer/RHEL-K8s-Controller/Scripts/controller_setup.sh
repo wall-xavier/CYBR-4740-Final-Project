@@ -39,10 +39,18 @@ sudo systemctl disable firewalld
 sudo systemctl stop firewalld
 
 # Enable IP Forwarding
-echo "net.ipv4.ip_forward = 1" | sudo tee /etc/sysctl.d/99-ipforward.conf
+sudo modprobe br_netfilter
+sudo echo  "br_netfilter" > /etc/modules-load.d/k8s.conf
+sudo cat <<EOF > /etc/sysctl.d/k8s.conf
+net.bridge.bridge-nf-call-iptables = 1
+net.bridge.bridge-nf-call-ip6tables = 1
+net.ipv4.ip_forward = 1
+EOF
+
 sudo sysctl --system
 
 # Install and enable Kubernetes
+
 sudo dnf install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
 
 # Setup Vmware tools
