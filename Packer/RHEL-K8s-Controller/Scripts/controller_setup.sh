@@ -60,6 +60,14 @@ sudo tee /etc/cloud/cloud.cfg.d/99-datasource.cfg << EOF
 datasource_list: [ VMware ]
 EOF
 
+# Install NodeJS
+sudo dnf module enable -y nodejs:20
+sudo dnf install -y nodejs
+
+# Install Wrangler
+sudo npm i -D wrangler@latest
+
+# Clean up cloud-init
 sudo cloud-init clean --logs
 
 # Cleanup passwordless sudo authentication

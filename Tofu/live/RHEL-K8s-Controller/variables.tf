@@ -153,3 +153,25 @@ variable "k8s_token" {
   type = string
 
 }
+
+
+variable "cloudflare_account_id" {
+
+  description = "Cloudflare Account ID"
+  type = string
+
+}
+
+variable "cloudflare_api_key" {
+
+  description = "Cloudflare API Key"
+  type = string
+
+}
+
+variable "bucket_name" {
+
+  description = "Bucket to place the Kubernetes Config"
+  type = string
+
+}
