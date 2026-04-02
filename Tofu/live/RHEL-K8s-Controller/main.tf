@@ -143,7 +143,7 @@ runcmd:
   - mkdir -p "/home/${var.ssh_username}/.kube/"
   - cp /etc/kubernetes/admin.conf /home/${var.ssh_username}/.kube/config
   - chown -R ${var.ssh_username}:${var.ssh_username} /home/${var.ssh_username}/.kube/
-  - CLOUDFLARE_ACCOUNT_ID=${var.cloudflare_account_id} CLOUDFLARE_API_TOKEN=${var.cloudflare_api_key} npx wrangler r2 object ${var.bucket_name}/kubernetes-configuration/config --file=/home/${var.ssh_username}/.kube/config
+  - CLOUDFLARE_ACCOUNT_ID=${var.cloudflare_account_id} CLOUDFLARE_API_TOKEN=${var.cloudflare_api_key} npx -y wrangler r2 object put ${var.bucket_name}/kubernetes-configuration/config --file=/home/${var.ssh_username}/.kube/config --remote
 EOF
     )
     "guestinfo.userdata.encoding" = "base64"
