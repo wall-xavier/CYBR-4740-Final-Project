@@ -11,15 +11,15 @@ provider "vsphere" {
 locals {
 
   current_worker_ips = [
-    for i in range(3) : cidrhost(var.env_networks[terraform.workspace].subnet, i + 3)
+    for i in range(3) : cidrhost(var.env_networks[terraform.workspace].subnet, i + var.ip_offset + 1)
 
   ]
 
-  worker_static = cidrhost(var.env_networks[terraform.workspace].subnet, 2)
+  worker_static = cidrhost(var.env_networks[terraform.workspace].subnet, var.ip_offset)
 
   rendered_hosts = templatefile("${path.module}/configuration/hosts.tftpl", {
     env_name  = terraform.workspace
-    master_ip = cidrhost(var.env_networks[terraform.workspace].subnet, 2)
+    master_ip = cidrhost(var.env_networks[terraform.workspace].subnet, var.ip_offset)
     worker_ip = local.current_worker_ips
   })
 }
@@ -72,7 +72,7 @@ data "vsphere_network" "network" {
 
 data "vsphere_network" "network1" {
 
-  name          = "Updating Port Group"
+  name          = var.internet_port_group
   datacenter_id = data.vsphere_datacenter.datacenter.id
 
 }

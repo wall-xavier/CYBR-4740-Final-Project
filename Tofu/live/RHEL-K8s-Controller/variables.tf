@@ -115,9 +115,9 @@ variable "env_networks" {
   default = {
 
     default = {
-      subnet     = "172.16.0.0/24"
-      gateway    = "172.16.0.1"
-      vm_network = "CYBR-4740-Project-Network-Default"
+      subnet     = "10.0.10.0/24"
+      gateway    = "10.0.10.1"
+      vm_network = "Profos ISP Port Group"
     }
     dev = {
       subnet     = "172.16.1.0/24"
@@ -137,7 +137,7 @@ variable "ip_offset" {
 
   description = "How many addresses off the base should be used for the IP"
   type        = number
-  default     = 2
+  default     = 11
 }
 
 variable "ssh_username" {
@@ -173,5 +173,13 @@ variable "bucket_name" {
 
   description = "Bucket to place the Kubernetes Config"
   type = string
+
+}
+
+variable "internet_port_group" {
+
+  description = "Port group for controller Internet Access"
+  type = string
+  default = "Updating Port Group"
 
 }

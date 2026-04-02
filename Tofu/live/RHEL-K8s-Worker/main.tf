@@ -17,7 +17,7 @@ locals {
 
   rendered_hosts = templatefile("${path.module}/configuration/hosts.tftpl", {
     env_name  = terraform.workspace
-    master_ip = cidrhost(var.env_networks[terraform.workspace].subnet, 2)
+    master_ip = cidrhost(var.env_networks[terraform.workspace].subnet, var.ip_offset - 1)
     worker_ip = local.current_worker_ips
   })
 }
