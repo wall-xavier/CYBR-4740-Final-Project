@@ -17,7 +17,7 @@ locals {
 
   rendered_hosts = templatefile("${path.module}/configuration/hosts.tftpl", {
     env_name  = terraform.workspace
-    master_ip = cidrhost(var.env_networks[terraform.workspace].subnet, 1)
+    master_ip = cidrhost(var.env_networks[terraform.workspace].subnet, 2)
     worker_ip = local.current_worker_ips
   })
 }
@@ -77,16 +77,17 @@ data "vsphere_virtual_machine" "template" {
 
 resource "vsphere_virtual_machine" "rhel-worker" {
 
-  count            = var.machine_count
-  name             = "${var.vm_name}-${terraform.workspace}-${random_uuid.vm_id[count.index].result}"
-  resource_pool_id = data.vsphere_host.host.resource_pool_id
-  datastore_id     = data.vsphere_datastore.datastore.id
-  num_cpus         = var.vm_cpus
-  memory           = var.vm_memory
-  guest_id         = data.vsphere_virtual_machine.template.guest_id
-  scsi_type        = data.vsphere_virtual_machine.template.scsi_type
-  firmware         = data.vsphere_virtual_machine.template.firmware
-  folder           = vsphere_folder.env_folder.path
+  count                      = var.machine_count
+  name                       = "${var.vm_name}-${terraform.workspace}-${random_uuid.vm_id[count.index].result}"
+  resource_pool_id           = data.vsphere_host.host.resource_pool_id
+  datastore_id               = data.vsphere_datastore.datastore.id
+  num_cpus                   = var.vm_cpus
+  memory                     = var.vm_memory
+  guest_id                   = data.vsphere_virtual_machine.template.guest_id
+  scsi_type                  = data.vsphere_virtual_machine.template.scsi_type
+  firmware                   = data.vsphere_virtual_machine.template.firmware
+  folder                     = vsphere_folder.env_folder.path
+  wait_for_guest_net_timeout = 0
 
   network_interface {
     network_id   = data.vsphere_network.network.id
@@ -101,36 +102,27 @@ resource "vsphere_virtual_machine" "rhel-worker" {
 
   clone {
     template_uuid = data.vsphere_virtual_machine.template.id
-    customize {
-      linux_options {
-        host_name = "${var.vm_name}-${terraform.workspace}-${random_uuid.vm_id[count.index].result}"
-        domain    = var.vm_domain_name
-      }
-      network_interface {
-
-        ipv4_address = cidrhost(var.env_networks[terraform.workspace].subnet, count.index + var.ip_offset)
-        ipv4_netmask = var.ip_netmask
-      }
-      ipv4_gateway = var.env_networks[terraform.workspace].gateway
-    }
   }
 
-  vapp {
-    properties = {
-    "guest_info.user-data" = base64encode(<<-EOF
-			#cloud-config
-				write_files:
-					- path: /etc/hosts
-					  owner: root:root
-					  permissions: '0644'
-					  content: |
-					    ${indent(10, local.rendered_hosts)}
-				runcmd:
-					- [systemctl, daemon-reload]
-					- [systmctl, enable kubelet]
-				EOF
+  extra_config = {
+    "guestinfo.userdata" = base64encode(<<-EOF
+#cloud-config
+write_files:
+  - path: /etc/hosts
+    owner: root:root
+    permissions: '0644'
+    content: |
+      ${indent(6, local.rendered_hosts)}
+runcmd:
+  - [systemctl, daemon-reload]
+  - [systemctl, enable, kubelet]
+  - nmcli c mod "System ens160" ipv4.method static ipv4.address ${cidrhost(var.env_networks[terraform.workspace].subnet, count.index + var.ip_offset)}/${var.ip_netmask}  ifname ens160
+  - nmcli c up "System ens160"
+  - sleep 5
+  - hostnamectl set-hostname ${var.vm_host_name}-${terraform.workspace}-${random_uuid.vm_id[count.index].result}
+  - kubeadm join master01:6443 --token ${var.k8s_token} --discovery-token-unsafe-skip-ca-verification
+EOF
     )
-   "guest_info.user-data.encoding" = "base64"
+    "guestinfo.userdata.encoding" = "base64"
   }
-}
 }

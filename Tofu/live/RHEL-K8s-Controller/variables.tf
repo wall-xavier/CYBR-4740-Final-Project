@@ -146,3 +146,10 @@ variable "ssh_username" {
   type        = string
 
 }
+
+variable "k8s_token" {
+
+  description = "Token used to allow clients to join the controller node"
+  type = string
+
+}

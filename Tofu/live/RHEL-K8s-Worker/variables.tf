@@ -137,5 +137,12 @@ variable "ip_offset" {
 
   description = "How many addresses off the base should be used for the IP"
   type        = number
-  default     = 2
+  default     = 3
+}
+
+variable "k8s_token" {
+
+  description = "Token to allow workers to join the control plane"
+  type        = string
+
 }
