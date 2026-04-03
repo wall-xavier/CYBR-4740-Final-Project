@@ -7,3 +7,6 @@ ${master_ip} master01.profos-systems.com master01
 %{ for index, ip in worker_ip ~}
 ${ip} worker-${index}.profos-systems.com worker-${index}
 %{ endfor }
+
+10.0.10.253 vcenter.local.profos-isp.com
+10.0.10.254 esxi.local.profos-isp.com
