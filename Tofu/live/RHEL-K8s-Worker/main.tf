@@ -118,6 +118,7 @@ resource "vsphere_virtual_machine" "rhel-worker" {
   }
 
   extra_config = {
+    "disk.enableUUID" = "1"
     "guestinfo.userdata" = base64encode(<<-EOF
 #cloud-config
 write_files:
@@ -127,14 +128,14 @@ write_files:
     content: |
       ${indent(6, local.rendered_hosts)}
 runcmd:
-  - [systemctl, daemon-reload]
-  - [systemctl, enable, kubelet]
   - nmcli c mod "System ens160" ipv4.method static ipv4.address ${cidrhost(var.env_networks[terraform.workspace].subnet, count.index + var.ip_offset)}/${var.ip_netmask}  ifname ens160
   - nmcli c up "System ens160"
   - nmcli c add con-name "Internet" ipv4.method auto ifname ens192 type ethernet
   - nmcli c up "Internet"
   - sleep 5
   - hostnamectl set-hostname ${var.vm_host_name}-${terraform.workspace}-${random_uuid.vm_id[count.index].result}
+  - [systemctl, daemon-reload]
+  - [systemctl, enable, kubelet]
   - kubeadm join master01:6443 --token ${var.k8s_token} --discovery-token-unsafe-skip-ca-verification
 EOF
     )

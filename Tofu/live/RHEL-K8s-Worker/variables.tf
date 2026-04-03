@@ -36,7 +36,7 @@ variable "vm_name" {
 
   description = "The name of the created virtual machine"
   type        = string
-  default     = "RHEL-Worker"
+  default     = "rhel-worker"
 
 }
 

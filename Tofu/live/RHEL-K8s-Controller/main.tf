@@ -122,6 +122,7 @@ network_interface {
   }
 
   extra_config = {
+    "disk.enableUUID" = "1"
     "guestinfo.userdata" = base64encode(<<-EOF
 #cloud-config
 write_files:
@@ -131,14 +132,14 @@ write_files:
     content: |
       ${indent(6, local.rendered_hosts)}
 runcmd:
-  - [systemctl, daemon-reload]
-  - [systemctl, enable, kubelet]
   - nmcli c mod "System ens160" ipv4.method static ipv4.address ${cidrhost(var.env_networks[terraform.workspace].subnet, count.index + var.ip_offset)}/${var.ip_netmask}  ifname ens160
   - nmcli c up "System ens160"
   - nmcli c add con-name "Internet" ipv4.method auto type ethernet ifname ens192
   - nmcli c up "Internet"
   - sleep 5
   - hostnamectl set-hostname ${var.vm_host_name}-${terraform.workspace}-${random_uuid.vm_id[count.index].result}
+  - [systemctl, daemon-reload]
+  - [systemctl, enable, kubelet]
   - kubeadm init --token=${var.k8s_token} --control-plane-endpoint="master01:6443" --upload-certs --apiserver-cert-extra-sans="127.0.0.1,${local.worker_static}" --pod-network-cidr=10.244.0.0/16
   - mkdir -p "/home/${var.ssh_username}/.kube/"
   - cp /etc/kubernetes/admin.conf /home/${var.ssh_username}/.kube/config
