@@ -43,11 +43,6 @@ resource "helm_release" "vsphere_cpi" {
     {
       name  = "config.datacenter"
       value = var.vsphere_datacenter
-    },
-
-    {
-      name  = "config.enabled"
-      value = "true"
     }
   ]
 }
@@ -81,11 +76,6 @@ resource "helm_release" "vsphere_csi" {
     {
       name  = "vcenter.datacenter"
       value = var.vsphere_datacenter
-    },
-
-    {
-      name  = "config.enabled"
-      value = "true"
     }
 
   ]

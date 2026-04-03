@@ -22,7 +22,7 @@ sudo sed -i '/ swap / s/^/#/' /etc/fstab
 
 # Disable SELinux
 sudo setenforce 0
-sudo sed -i 's/^SELINUX=enforcing$/SELINUC=permissive' /etc/selinux/config
+sudo sed -i 's/^SELINUX=enforcing$/SELINUX=permissive' /etc/selinux/config
 
 # Enabled Firewalld Rules
 sudo systemctl disable firewalld
@@ -54,7 +54,7 @@ EOF
 sudo dnf install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
 
 # Modify Kubelet to allow for Cloud Provider Control
-echo 'KUBELET_EXTRA_ARGS="--cloud-provider=external"' | sudo tee -a /etc/sysconfig/kubelet
+echo 'KUBELET_EXTRA_ARGS="--cloud-provider=external"' | sudo tee /etc/sysconfig/kubelet
 
 # Setup Vmware tools
 sudo dnf install -y open-vm-tools && sudo systemctl enable --now vmtoolsd
