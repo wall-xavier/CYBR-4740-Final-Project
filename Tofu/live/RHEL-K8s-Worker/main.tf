@@ -135,6 +135,7 @@ runcmd:
   - hostnamectl set-hostname ${var.vm_host_name}-${terraform.workspace}-${random_uuid.vm_id[count.index].result}
   - [systemctl, daemon-reload]
   - [systemctl, enable, kubelet]
+  - systemctl restart vmtoolsd
   - kubeadm join master01:6443 --token ${var.k8s_token} --discovery-token-unsafe-skip-ca-verification
 EOF
     )
