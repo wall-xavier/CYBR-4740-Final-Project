@@ -75,3 +75,50 @@ resource "helm_release" "awx_operator" {
     }
   ]
 }
+
+data "kubernetes_service_v1" "awx_svc" {
+
+
+  depends_on = [helm_release.awx_operator]
+
+
+
+
+
+  metadata {
+
+
+    name      = "awx-profos-service"
+
+
+    namespace = "awx"
+
+
+  }
+
+
+}
+
+
+
+
+
+data "kubernetes_secret_v1" "awx_admin_password" {
+
+
+  depends_on = [helm_release.awx_operator]
+
+
+  metadata {
+
+
+    name      = "awx-profos-admin-password"
+
+
+    namespace = "awx"
+
+
+  }
+
+
+}

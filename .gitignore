@@ -10,3 +10,5 @@ terraform.tfstate.backup
 node_modules/
 package.json
 package-lock.json
+
+.wrangler/
