@@ -60,7 +60,7 @@ variable "vm_cpus" {
 
   description = "Number of virtual CPUs that will be allocated to the VM"
   type        = number
-  default     = 2
+  default     = 6
 
 }
 
@@ -68,7 +68,7 @@ variable "vm_memory" {
 
   description = "Amount of memory the VM will be allocated"
   type        = number
-  default     = 8192
+  default     = 16384
 
 }
 
