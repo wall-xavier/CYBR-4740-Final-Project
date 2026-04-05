@@ -20,9 +20,11 @@ sudo systemctl restart containerd && sudo systemctl enable containerd
 sudo swapoff -a
 sudo sed -i '/ swap / s/^/#/' /etc/fstab
 
-# Disable SELinux
-sudo setenforce 0
-sudo sed -i 's/^SELINUX=enforcing$/SELINUX=permissive' /etc/selinux/config
+# Disable SELINUX
+sudo sed -i 's/^SELINUX=.*/SELINUX=disabled/g' /etc/selinux/config
+
+# Disabled SELinux at the Kernel Level
+sudo grubby --update-kernel=ALL --args="selinux=0"
 
 # Enabled Firewalld Rules
 sudo systemctl disable firewalld
