@@ -127,16 +127,19 @@ write_files:
     content: |
       ${indent(6, local.rendered_hosts)}
 runcmd:
-  - nmcli c mod "System ens160" ipv4.method static ipv4.address ${cidrhost(var.env_networks[terraform.workspace].subnet, count.index + var.ip_offset)}/${var.ip_netmask}  ifname ens160
+  - setenforce 0
+  - nmcli c mod "System ens160" ipv4.method static ipv4.address ${cidrhost(var.env_networks[terraform.workspace].subnet, count.index + var.ip_offset)}/${var.ip_netmask} ifname ens160
   - nmcli c up "System ens160"
   - nmcli c add con-name "Internet" ipv4.method auto ifname ens192 type ethernet
   - nmcli c up "Internet"
-  - sleep 5
   - hostnamectl set-hostname ${var.vm_host_name}-${terraform.workspace}-${random_uuid.vm_id[count.index].result}
+  - sleep 5
   - [systemctl, daemon-reload]
-  - [systemctl, enable, kubelet]
+  - systemctl start kubelet
   - systemctl restart vmtoolsd
   - kubeadm join master01:6443 --token ${var.k8s_token} --discovery-token-unsafe-skip-ca-verification
+  - ip route add 10.0.0.0/8 via ${cidrhost(var.env_networks[terraform.workspace].subnet, 1)} dev ens160
+  - ip route add 172.16.0.0/16 via ${cidrhost(var.env_networks[terraform.workspace].subnet, 1)} dev ens160
 EOF
     )
     "guestinfo.userdata.encoding" = "base64"

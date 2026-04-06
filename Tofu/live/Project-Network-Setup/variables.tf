@@ -30,7 +30,7 @@ variable "virtual_switch_name" {
 
   description = "Network to place the port group"
   type        = string
-  default     = "Profos Switch"
+  default     = "vSwitch0"
 
 }
 

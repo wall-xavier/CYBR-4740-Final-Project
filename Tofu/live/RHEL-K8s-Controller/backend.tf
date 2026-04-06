@@ -2,7 +2,7 @@ terraform {
 
   backend "s3" {
 
-    key    = "machines/rhel-k8s-controller/terraform.tfstate"
+    key    = "machines/rhel-k8s-controller/${terraform.workspace}/terraform.tfstate"
     bucket = "cybr-4740-backend-bucket"
 
     skip_credentials_validation = true

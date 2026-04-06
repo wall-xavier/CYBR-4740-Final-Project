@@ -2,7 +2,7 @@ terraform {
 
   backend "s3" {
 
-    key    = "services/metallb-namespace/terraform.tfstate"
+    key    = "services/metallb-namespace/${terraform.workspace}/terraform.tfstate"
     bucket = "cybr-4740-backend-bucket"
 
     skip_credentials_validation = true
