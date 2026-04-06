@@ -8,12 +8,6 @@ provider "vsphere" {
 
 }
 
-resource "random_uuid" "vm_id" {
-
-  count = var.machine_count
-
-}
-
 resource "vsphere_folder" "vm_folder" {
 
   path          = var.vm_folder
@@ -68,10 +62,10 @@ data "vsphere_virtual_machine" "template" {
 
 }
 
-resource "vsphere_virtual_machine" "rhel-worker" {
+resource "vsphere_virtual_machine" "freeipa-server" {
 
   count                      = var.machine_count
-  name                       = "${var.vm_name}-${terraform.workspace}-${random_uuid.vm_id[count.index].result}"
+  name                       = "${var.vm_name}-${terraform.workspace}-[count.index]"
   resource_pool_id           = data.vsphere_host.host.resource_pool_id
   datastore_id               = data.vsphere_datastore.datastore.id
   num_cpus                   = var.vm_cpus
@@ -111,7 +105,7 @@ runcmd:
   - nmcli c add con-name "Internet" ipv4.method auto ifname ens192 type ethernet
   - nmcli c up "Internet"
   - sleep 5
-  - hostnamectl set-hostname ${var.vm_host_name}-${terraform.workspace}-${random_uuid.vm_id[count.index].result}
+  - hostnamectl set-hostname ${var.vm_host_name}-${terraform.workspace}-[count.index]}
   - systemctl restart vmtoolsd
 EOF
     )

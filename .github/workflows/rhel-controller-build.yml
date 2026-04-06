@@ -79,6 +79,7 @@ jobs:
         run: tofu init
 
       - name: Tofu Plan
+        id: plan
         run: tofu plan
 
       - name: Tofu Build
@@ -92,8 +93,9 @@ jobs:
         with:
           issue-number: ${{ github.event.pull_request.number }}
           body: |
-            ```RHEL K8s Controller has been successfully build```
-            ```${{ steps.apply.outputs.stdout }}```
+            ```RHEL K8s Controller has been successfully build!```
+            ```The following shows the plan used:```
+            ```${{ steps.plan.outputs.stdout }}```
 
       - name: Tofu Destroy
         run: tofu destroy -auto-approve
