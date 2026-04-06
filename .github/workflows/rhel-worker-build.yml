@@ -70,13 +70,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
 
+      - name: Tofu Init
+        run: tofu init
+
       - name: Set Workspace
         run: |
           tofu workspace new dev
           tofu workspace select dev
-
-      - name: Tofu Init
-        run: tofu init
 
       - name: Tofu Plan
         id: plan
@@ -85,17 +85,6 @@ jobs:
       - name: Tofu Build
         id: apply
         run: tofu apply -auto-approve
-
-      - uses: peter-evans/create-or-update-comment@v4
-        if: always()
-        env:
-          RESULT_EMOJI: ${{ steps.apply.outcome == 'success' && '✅' || '⚠️' }}
-        with:
-          issue-number: ${{ github.event.pull_request.number }}
-          body: |
-            ```RHEL K8s Worker has been successfully build!```
-            ```The following shows the plan used:```
-            ```${{ steps.plan.outputs.stdout }}```
 
       - name: Tofu Destroy
         run: tofu destroy -auto-approve
