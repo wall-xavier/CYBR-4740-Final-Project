@@ -1,4 +1,4 @@
-name: Packer Build RHEL Worker
+name: Build and Test RHEL Worker
 
 on:
 
@@ -6,9 +6,9 @@ on:
     branches: [ main ]
     paths:
       - 'Packer/RHEL-K8s-Worker/**'
-
+      - 'Tofu/live/RHEL-K8s-Worker/**'
 jobs:
-  packer:
+  build:
     runs-on: self-hosted
     env:
       PKR_VAR_REDHAT_ORGID: ${{ secrets.REDHAT_ORGID }}
@@ -18,8 +18,6 @@ jobs:
       PKR_VAR_password: ${{ secrets.VCENTER_PASSWORD }}
       PKR_VAR_vcenter_server: ${{ secrets.VCENTER_SERVER }}
       PKR_VAR_username: ${{ secrets.VCENTER_USERNAME }}
-      PKR_VAR_setup_username: ${{ secrets.SETUP_USERNAME }}
-      PKR_VAR_setup_password: ${{ secrets.SETUP_PASSWORD }}
     defaults:
       run:
         working-directory: ./Packer/RHEL-K8s-Worker/
@@ -48,3 +46,56 @@ jobs:
         env: 
           PKR_VAR_bind_address: ${{ steps.get_ip.outputs.ip }}
         run: /usr/bin/packer build -force .
+  test:
+    needs: build
+    runs-on: self-hosted
+    env:
+      AWS_DEFAULT_REGION: wnam
+      AWS_ENDPOINT_URL_S3: ${{ secrets.CLOUDFLARE_BUCKET_URL }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.CLOUDFLARE_BUCKET_SECRET_ACCESS_KEY }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.CLOUDFLARE_BUCKET_ACCESS_KEY_ID }}
+      TF_VAR_vsphere_user: ${{ secrets.VCENTER_USERNAME }}
+      TF_VAR_vsphere_password: ${{ secrets.VCENTER_PASSWORD}}
+      TF_VAR_vsphere_server: ${{ secrets.VCENTER_SERVER }}
+      TF_VAR_vsphere_host: ${{ secrets.VSPHERE_HOST }}
+      TF_VAR_bucket_name: ${{ secrets.KUBERNETES_CONFIG_BUCKET }}
+      TF_VAR_cloudflare_api_key: ${{ secrets.CLOUDFLARE_R2_API }}
+      TF_VAR_cloudflare_account_id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      TF_VAR_k8s_token: ${{ secrets.K8S_JOIN_TOKEN }}
+      TF_VAR_ssh_username: ${{ secrets.SSH_USERNAME }}
+    defaults:
+      run:
+        working-directory: ./Tofu/live/RHEL-K8s-Worker/
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Set Workspace
+        run: |
+          tofu workspace new dev
+          tofu workspace select dev
+
+      - name: Tofu Init
+        run: tofu init
+
+      - name: Tofu Plan
+        id: plan
+        run: tofu plan
+
+      - name: Tofu Build
+        id: apply
+        run: tofu apply -auto-approve
+
+      - uses: peter-evans/create-or-update-comment@v4
+        if: always()
+        env:
+          RESULT_EMOJI: ${{ steps.apply.outcome == 'success' && '✅' || '⚠️' }}
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            ```RHEL K8s Worker has been successfully build!```
+            ```The following shows the plan used:```
+            ```${{ steps.plan.outputs.stdout }}```
+
+      - name: Tofu Destroy
+        run: tofu destroy -auto-approve
