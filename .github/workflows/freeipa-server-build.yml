@@ -1,4 +1,4 @@
-name: Packer Build RHEL Controller
+name: Packer Build FreeIPA Server
 
 on:
 
