@@ -31,6 +31,13 @@ EOF
 
 sudo cloud-init clean --logs
 
+# Install OpenTofu
+sudo mkdir -p /usr/src/opentofu/
+sudo cd /usr/src/opentofu/
+sudo curl --proto '=https' --tlsv1.2 -fsSL https://get.opentofu.org/install-opentofu.sh -o install-opentofu.sh
+sudo chmod +x install-opentofu.sh
+sudo ./install-opentofu.sh --install-method rpm
+
 # Disable Firewall to allow the runner to deploy an HTTP server anywhere
 sudo systemctl stop firewalld
 sudo systemctl disable firewalld
