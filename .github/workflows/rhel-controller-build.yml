@@ -47,6 +47,7 @@ jobs:
           PKR_VAR_bind_address: ${{ steps.get_ip.outputs.ip }}
         run: /usr/bin/packer build -force .
   test:
+    needs: build
     runs-on: self-hosted
     env:
       AWS_DEFAULT_REGION: wnam
