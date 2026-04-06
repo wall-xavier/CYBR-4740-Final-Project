@@ -140,7 +140,7 @@ runcmd:
   - hostnamectl set-hostname ${var.vm_host_name}-${terraform.workspace}-${random_uuid.vm_id[count.index].result}
   - [systemctl, daemon-reload]
   - [systemctl, enable, kubelet]
-  - kubeadm init --token=${var.k8s_token} --control-plane-endpoint="master01:6443" --upload-certs --apiserver-cert-extra-sans="127.0.0.1,${local.worker_static}" --pod-network-cidr=10.244.0.0/16
+  - kubeadm init --token=${var.k8s_token} --control-plane-endpoint="master-${terraform.workspace}-01:6443" --upload-certs --apiserver-cert-extra-sans="127.0.0.1,${local.worker_static}" --pod-network-cidr=10.244.0.0/16
   - mkdir -p "/home/${var.ssh_username}/.kube/"
   - cp /etc/kubernetes/admin.conf /home/${var.ssh_username}/.kube/config
   - chown -R ${var.ssh_username}:${var.ssh_username} /home/${var.ssh_username}/.kube/

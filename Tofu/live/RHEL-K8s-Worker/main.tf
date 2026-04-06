@@ -137,7 +137,7 @@ runcmd:
   - [systemctl, daemon-reload]
   - systemctl start kubelet
   - systemctl restart vmtoolsd
-  - kubeadm join master01:6443 --token ${var.k8s_token} --discovery-token-unsafe-skip-ca-verification
+  - kubeadm join master-${terraform.workspace}-01:6443 --token ${var.k8s_token} --discovery-token-unsafe-skip-ca-verification
   - ip route add 10.0.0.0/8 via ${cidrhost(var.env_networks[terraform.workspace].subnet, 1)} dev ens160
   - ip route add 172.16.0.0/16 via ${cidrhost(var.env_networks[terraform.workspace].subnet, 1)} dev ens160
 EOF

@@ -9,7 +9,7 @@ provider "kubernetes" {
 
 resource "kubernetes_namespace_v1" "web" {
   metadata {
-    name = "profos-web"
+    name = "profos-web-${terraform.workspace}"
   }
 }
 

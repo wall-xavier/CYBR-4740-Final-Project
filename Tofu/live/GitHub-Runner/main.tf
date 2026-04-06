@@ -130,14 +130,17 @@ write_files:
       ::1 localhost
       ${var.vsphere_server_ip} ${var.vsphere_server}
       ${var.vsphere_host_ip}  ${var.vsphere_host}
-
+      172.16.0.2	master-default-01
+      172.16.1.2	master-dev-01
+      172.16.2.2	master-prod-01
 runcmd:
   - [sudo , -u , github, /usr/src/actions-runner/config.sh, --unattended ,--url , "https://github.com/wall-xavier/CYBR-4740-Final-Project", --token ,"${var.github_token}", --name ,"${var.vm_host_name}-${random_uuid.vm_id[count.index].result}"]
   - [systemctl, start, github_runner.service]
   - [systemctl, enable, github_runner.service]
   - [nmcli, c, add, con-name, "Interal", ipv4.method, static, ipv4.address, "${cidrhost(var.subnet, count.index + var.ip_offset)}/${var.ip_netmask}", ifname, ens192, type, ethernet]
   - [hostnamectl, set-hostname, "${var.vm_host_name}-${random_uuid.vm_id[count.index].result}"]
-  - [reboot]
+  - ip route add 10.0.0.0/8 via ${cidrhost(var.subnet, 1)} dev ens192
+  - ip route add 172.16.0.0/16 via ${cidrhost(var.subnet, 1)} dev ens192
 EOF
     )
     "guestinfo.userdata.encoding" = "base64"

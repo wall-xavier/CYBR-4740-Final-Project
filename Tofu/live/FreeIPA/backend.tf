@@ -2,7 +2,7 @@ terraform {
 
   backend "s3" {
 
-    key    = "machines/freeipa/terraform.tfstate"
+    key    = "machines/freeipa/${terraform.workspace}/terraform.tfstate"
     bucket = "cybr-4740-backend-bucket"
 
     skip_credentials_validation = true

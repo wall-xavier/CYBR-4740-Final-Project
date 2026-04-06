@@ -2,7 +2,7 @@ terraform {
 
   backend "s3" {
 
-    key    = "machines/profos-website/terraform.tfstate"
+    key    = "machines/profos-website/${terraform.workspace}/terraform.tfstate"
     bucket = "cybr-4740-backend-bucket"
 
     skip_credentials_validation = true

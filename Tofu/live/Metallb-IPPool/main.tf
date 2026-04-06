@@ -23,12 +23,12 @@ resource "kubernetes_manifest" "metallb_pool" {
     apiVersion = "metallb.io/v1beta1"
     kind       = "IPAddressPool"
     metadata = {
-      name      = "profos-ip-pool"
+      name      = "profos-${terraform.workspace}-ip-pool"
       namespace = "metallb-system"
     }
     spec = {
       addresses = [
-        "10.0.10.50-10.0.10.70"
+        var.env_ips[terraform.workspace].addresses
       ]
     }
   }
@@ -41,11 +41,11 @@ resource "kubernetes_manifest" "metallb_l2_advertisement" {
     apiVersion = "metallb.io/v1beta1"
     kind       = "L2Advertisement"
     metadata = {
-      name      = "profos-l2-ad"
+      name      = "profos-${terraform.workspace}-l2-ad"
       namespace = "metallb-system"
     }
     spec = {
-      ipAddressPools = ["profos-ip-pool"]
+      ipAddressPools = ["profos-${terraform.workspace}-ip-pool"]
     }
   }
 }

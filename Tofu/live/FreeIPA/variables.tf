@@ -114,9 +114,9 @@ variable "env_networks" {
   default = {
 
     default = {
-      subnet     = "10.0.10.0/24"
-      gateway    = "10.0.10.1"
-      vm_network = "Profos ISP Port Group"
+      subnet     = "172.16.0.0/24"
+      gateway    = "172.16.0.1"
+      vm_network = "CYBR-4740-Project-Network-Default"
     }
     dev = {
       subnet     = "172.16.1.0/24"
