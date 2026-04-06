@@ -74,7 +74,7 @@ jobs:
         run: |
           tofu workspace new dev
           tofu workspace select dev
-          tofu init
+          tofu init -reconfigure
 
       - name: Tofu Plan
         id: plan
