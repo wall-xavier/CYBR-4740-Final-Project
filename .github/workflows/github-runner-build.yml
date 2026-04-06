@@ -8,7 +8,7 @@ on:
       - 'Packer/Github-Runner/**'
 
 jobs:
-  packer:
+  build:
     runs-on: self-hosted
     env:
       PKR_VAR_REDHAT_ORGID: ${{ secrets.REDHAT_ORGID }}
