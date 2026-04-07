@@ -1,0 +1,132 @@
+name: Kubernetes Build and Test
+
+on:
+  workflow_call:
+
+jobs:
+  networking:
+    runs-on: self-hosted
+    env:
+      AWS_DEFAULT_REGION: wnam
+      AWS_ENDPOINT_URL_S3: ${{ secrets.CLOUDFLARE_BUCKET_URL }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.CLOUDFLARE_BUCKET_SECRET_ACCESS_KEY }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.CLOUDFLARE_BUCKET_ACCESS_KEY_ID }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      CLOUDFLARE_API_TOKEN: ${{ secretes.CLOUDFLARE_R2_API }}
+    defaults:
+      working-directory: ./Tofu/live/K8s-Network-Setup/
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Tofu Init
+        run: tofu init
+
+      - name: Fetch K8s Config
+        run: |
+          CONFIG_DATA=$(npx wrangler r2 object get ${{ secrets.CLOUDFLARE_BUCKET_URL}}/kubernetes-configuration/dev/config --pipe --remote)
+          echo "::add-mask::$CONFIG_DATA"
+          echo "TF_VAR_k8s_config_raw=$CONFIG_DATA" >> $GITHUB_ENV
+
+      - name: Set Workspace
+        run: |
+          tofu workspace select dev || tofu workspace new dev
+
+      - name: Tofu Apply
+        run: tofu apply -auto-approve
+
+  load-balancer:
+    needs: networking
+    runs-on: self-hosted
+    env:
+      AWS_DEFAULT_REGION: wnam
+      AWS_ENDPOINT_URL_S3: ${{ secrets.CLOUDFLARE_BUCKET_URL }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.CLOUDFLARE_BUCKET_SECRET_ACCESS_KEY }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.CLOUDFLARE_BUCKET_ACCESS_KEY_ID }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      CLOUDFLARE_API_TOKEN: ${{ secretes.CLOUDFLARE_R2_API }}
+    defaults:
+      working-directory: ./Tofu/live/Metallb-Installtion/
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Tofu Init
+        run: tofu init
+
+      - name: Fetch K8s Config
+        run: |
+          CONFIG_DATA=$(npx wrangler r2 object get ${{ secrets.CLOUDFLARE_BUCKET_URL}}/kubernetes-configuration/dev/config --pipe --remote)
+          echo "::add-mask::$CONFIG_DATA"
+          echo "TF_VAR_k8s_config_raw=$CONFIG_DATA" >> $GITHUB_ENV
+
+      - name: Set Workspace
+        run: |
+          tofu workspace select dev || tofu workspace new dev
+
+      - name: Tofu Apply
+        run: tofu apply -auto-approve
+
+  load-balancer-ip:
+    needs: load-balancer
+    runs-on: self-hosted
+    env:
+      AWS_DEFAULT_REGION: wnam
+      AWS_ENDPOINT_URL_S3: ${{ secrets.CLOUDFLARE_BUCKET_URL }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.CLOUDFLARE_BUCKET_SECRET_ACCESS_KEY }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.CLOUDFLARE_BUCKET_ACCESS_KEY_ID }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      CLOUDFLARE_API_TOKEN: ${{ secretes.CLOUDFLARE_R2_API }}
+    defaults:
+      working-directory: ./Tofu/live/Metallb-IPAddresses/
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Tofu Init
+        run: tofu init
+
+      - name: Fetch K8s Config
+        run: |
+          CONFIG_DATA=$(npx wrangler r2 object get ${{ secrets.CLOUDFLARE_BUCKET_URL}}/kubernetes-configuration/dev/config --pipe --remote)
+          echo "::add-mask::$CONFIG_DATA"
+          echo "TF_VAR_k8s_config_raw=$CONFIG_DATA" >> $GITHUB_ENV
+
+      - name: Set Workspace
+        run: |
+          tofu workspace select dev || tofu workspace new dev
+
+      - name: Tofu Apply
+        run: tofu apply -auto-approve
+
+  web-server:
+    needs: load-balancer-ip
+    runs-on: self-hosted
+    env:
+      AWS_DEFAULT_REGION: wnam
+      AWS_ENDPOINT_URL_S3: ${{ secrets.CLOUDFLARE_BUCKET_URL }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.CLOUDFLARE_BUCKET_SECRET_ACCESS_KEY }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.CLOUDFLARE_BUCKET_ACCESS_KEY_ID }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      CLOUDFLARE_API_TOKEN: ${{ secretes.CLOUDFLARE_R2_API }}
+    defaults:
+      working-directory: ./Tofu/live/Web-Server/
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Tofu Init
+        run: tofu init
+
+      - name: Fetch K8s Config
+        run: |
+          CONFIG_DATA=$(npx wrangler r2 object get ${{ secrets.CLOUDFLARE_BUCKET_URL}}/kubernetes-configuration/dev/config --pipe --remote)
+          echo "::add-mask::$CONFIG_DATA"
+          echo "TF_VAR_k8s_config_raw=$CONFIG_DATA" >> $GITHUB_ENV
+
+      - name: Set Workspace
+        run: |
+          tofu workspace select dev || tofu workspace new dev
+
+      - name: Tofu Apply
+        run: tofu apply -auto-approve

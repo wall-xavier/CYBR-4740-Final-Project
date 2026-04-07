@@ -5,8 +5,8 @@ on:
   pull_request:
     branches: [ main ]
     paths:
-      - 'Packer/RHEL-K8s-Controller/**'
-      - 'Tofu/live/RHEL-K8s-Controller/**'
+      - 'Packer/**'
+      - 'Tofu/live/**'
 jobs:
   build:
     runs-on: self-hosted
@@ -82,6 +82,9 @@ jobs:
 
       - name: Tofu Build
         run: tofu apply -auto-approve
+
+      - name: Build Worker
+        uses: ./.github/workflows/rhel-worker-build.yml
 
       - name: Tofu Destroy
         run: tofu destroy -compact-warnings -auto-approve
