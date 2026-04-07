@@ -91,7 +91,7 @@ runcmd:
   - nmcli c mod "System ens160" ipv4.method static ipv4.address ${cidrhost(var.env_networks[terraform.workspace].subnet, count.index + var.ip_offset)}/${var.ip_netmask}  ifname ens160
   - nmcli c up "System ens160"
   - sleep 5
-  - hostnamectl set-hostname ipa.profos-systems.com
+  - hostnamectl set-hostname ${var.vm_name}-${terraform.workspace}-${random_uuid.vm_id[count.index].result}
   - systemctl restart vmtoolsd
 EOF
     )
