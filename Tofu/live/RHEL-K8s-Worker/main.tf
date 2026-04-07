@@ -28,7 +28,7 @@ resource "random_uuid" "vm_id" {
 
 }
 
-resource "vsphere_folder" "env_folder" {
+resource "vsphere_folder" "vm_folder" {
 
   path          = "${var.vm_folder}/RHEL-K8s-Worker-${terraform.workspace}"
   type          = "vm"
