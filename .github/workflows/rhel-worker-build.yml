@@ -61,7 +61,7 @@ jobs:
   kubernetes-build:
     needs: test
     uses: ./.github/workflows/kubernetes-tests.yml
-    env:
+    secrets:
       AWS_DEFAULT_REGION: wnam
       AWS_ENDPOINT_URL_S3: ${{ secrets.CLOUDFLARE_BUCKET_URL }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.CLOUDFLARE_BUCKET_SECRET_ACCESS_KEY }}
