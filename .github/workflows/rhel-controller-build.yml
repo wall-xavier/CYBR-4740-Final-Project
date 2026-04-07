@@ -84,7 +84,7 @@ jobs:
         run: tofu apply -auto-approve
 
       - name: Tofu Destroy
-        run: tofu destroy -auto-approve
+        run: tofu destroy -compact-warnings -auto-approve
 
   request:
     needs:
