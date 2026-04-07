@@ -79,7 +79,7 @@ jobs:
 
   kubernetes-build:
     needs: test
-    uses: ./.github/worklows/kubernetes-tests.yml
+    uses: ./.github/workflows/kubernetes-tests.yml
 
   destroy:
     needs: kubernetes-build
