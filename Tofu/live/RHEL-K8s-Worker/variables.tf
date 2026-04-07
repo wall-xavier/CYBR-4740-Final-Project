@@ -92,7 +92,7 @@ variable "vm_folder" {
 
   description = "The folder to keep all the project machines"
   type        = string
-  default     = "CYBR-4740-Final/Machines/RHEL-Worker"
+  default     = "CYBR-4740-Final/Machines/"
 
 }
 

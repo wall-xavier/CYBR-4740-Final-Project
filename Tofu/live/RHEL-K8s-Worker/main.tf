@@ -28,17 +28,9 @@ resource "random_uuid" "vm_id" {
 
 }
 
-resource "vsphere_folder" "vm_folder" {
-
-  path          = var.vm_folder
-  type          = "vm"
-  datacenter_id = data.vsphere_datacenter.datacenter.id
-
-}
-
 resource "vsphere_folder" "env_folder" {
 
-  path          = "${resource.vsphere_folder.vm_folder.path}/${terraform.workspace}"
+  path          = "${var.vm_folder}/RHEL-K8s-Worker-${terraform.workspace}"
   type          = "vm"
   datacenter_id = data.vsphere_datacenter.datacenter.id
 
@@ -93,7 +85,7 @@ resource "vsphere_virtual_machine" "rhel-worker" {
   guest_id                   = data.vsphere_virtual_machine.template.guest_id
   scsi_type                  = data.vsphere_virtual_machine.template.scsi_type
   firmware                   = data.vsphere_virtual_machine.template.firmware
-  folder                     = vsphere_folder.env_folder.path
+  folder                     = vsphere_folder.vm_folder.path
 
   network_interface {
     network_id   = data.vsphere_network.network.id

@@ -8,17 +8,16 @@ provider "vsphere" {
 
 }
 
-resource "vsphere_folder" "vm_folder" {
+resource "random_uuid" "vm_id" {
 
-  path          = var.vm_folder
-  type          = "vm"
-  datacenter_id = data.vsphere_datacenter.datacenter.id
+  count = var.machine_count
 
 }
 
-resource "vsphere_folder" "env_folder" {
 
-  path          = "${resource.vsphere_folder.vm_folder.path}/${terraform.workspace}"
+resource "vsphere_folder" "vm_folder" {
+
+  path          = "${var.vm_folder}/FreeIPA-${terraform.workspace}"
   type          = "vm"
   datacenter_id = data.vsphere_datacenter.datacenter.id
 
@@ -65,7 +64,7 @@ data "vsphere_virtual_machine" "template" {
 resource "vsphere_virtual_machine" "freeipa-server" {
 
   count                      = var.machine_count
-  name                       = "${var.vm_name}-${terraform.workspace}-[count.index]"
+  name                       = "${var.vm_name}-${terraform.workspace}-${random_uuid.vm_id[count.index].result}"
   resource_pool_id           = data.vsphere_host.host.resource_pool_id
   datastore_id               = data.vsphere_datastore.datastore.id
   num_cpus                   = var.vm_cpus
@@ -73,7 +72,7 @@ resource "vsphere_virtual_machine" "freeipa-server" {
   guest_id                   = data.vsphere_virtual_machine.template.guest_id
   scsi_type                  = data.vsphere_virtual_machine.template.scsi_type
   firmware                   = data.vsphere_virtual_machine.template.firmware
-  folder                     = vsphere_folder.env_folder.path
+  folder                     = vsphere_folder.vm_folder.path
 
   network_interface {
     network_id   = data.vsphere_network.network.id
@@ -105,7 +104,7 @@ runcmd:
   - nmcli c add con-name "Internet" ipv4.method auto ifname ens192 type ethernet
   - nmcli c up "Internet"
   - sleep 5
-  - hostnamectl set-hostname ${var.vm_host_name}-${terraform.workspace}-[count.index]}
+  - hostnamectl set-hostname ${var.vm_host_name}-${terraform.workspace}-${random_uuid.vm_id[count.index].result}}
   - systemctl restart vmtoolsd
 EOF
     )
