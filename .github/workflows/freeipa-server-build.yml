@@ -25,7 +25,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
 
-
       - name: Get Runner IP Address
         id: get_ip
         run: |
@@ -58,11 +57,8 @@ jobs:
       TF_VAR_vsphere_password: ${{ secrets.VCENTER_PASSWORD}}
       TF_VAR_vsphere_server: ${{ secrets.VCENTER_SERVER }}
       TF_VAR_vsphere_host: ${{ secrets.VSPHERE_HOST }}
-      TF_VAR_bucket_name: ${{ secrets.KUBERNETES_CONFIG_BUCKET }}
-      TF_VAR_cloudflare_api_key: ${{ secrets.CLOUDFLARE_R2_API }}
-      TF_VAR_cloudflare_account_id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-      TF_VAR_k8s_token: ${{ secrets.K8S_JOIN_TOKEN }}
-      TF_VAR_ssh_username: ${{ secrets.SSH_USERNAME }}
+      TF_VAR_admin_password: ${{ secrets.IPA_ADMIN_PASSWORD }}
+      TF_VAR_dm_password: ${{ secrets.IPA_DM_PASSWORD }}
     defaults:
       run:
         working-directory: ./Tofu/live/FreeIPA/
@@ -85,3 +81,34 @@ jobs:
 
       - name: Tofu Destroy
         run: tofu destroy -auto-approve -compact-warnings
+
+  request:
+    needs: test
+    runs-on: self-hosted
+    env:
+      AWS_DEFAULT_REGION: wnam
+      AWS_ENDPOINT_URL_S3: ${{ secrets.CLOUDFLARE_BUCKET_URL }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.CLOUDFLARE_BUCKET_SECRET_ACCESS_KEY }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.CLOUDFLARE_BUCKET_ACCESS_KEY_ID }}
+      TF_VAR_vsphere_user: ${{ secrets.VCENTER_USERNAME }}
+      TF_VAR_vsphere_password: ${{ secrets.VCENTER_PASSWORD}}
+      TF_VAR_vsphere_server: ${{ secrets.VCENTER_SERVER }}
+      TF_VAR_vsphere_host: ${{ secrets.VSPHERE_HOST }}
+      TF_VAR_admin_password: ${{ secrets.IPA_ADMIN_PASSWORD }}
+      TF_VAR_dm_password: ${{ secrets.IPA_DM_PASSWORD }}
+    defaults:
+      run:
+        working-directory: ./Tofu/live/FreeIPA/
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Tofu Init
+        run: tofu init
+
+      - name: Set Workspace
+        run: |
+          tofu workspace select prod || tofu workspace new prod
+
+      - name: Tofu Plan
+        run: tofu plan

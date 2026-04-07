@@ -1,8 +1,9 @@
 # Install the FreeIPA Server
 sudo dnf install -y ipa-server
 
-# Enabled Firewalld Rules
-firewall-cmd --add-service=freeipa-ldap --add-service=freeipa-ldaps --permanent
+# Disable Firewalld
+sudo systemctl stop firewalld
+sudo systemctl disable firewalld
 
 # Setup Vmware tools
 sudo dnf install -y open-vm-tools && sudo systemctl enable --now vmtoolsd

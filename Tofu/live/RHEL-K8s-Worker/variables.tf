@@ -2,26 +2,28 @@ variable "vsphere_user" {
 
   description = "The username used to authenticate with vsphere"
   type        = string
+  sensitive = true
 }
 
 variable "vsphere_password" {
 
   description = "The password used to authenticate with vsphere"
   type        = string
+  sensitive = true
 }
 
 variable "vsphere_server" {
 
   description = "The server tofu will authenticate to"
   type        = string
-
+  sensitive = true
 }
 
 variable "vsphere_host" {
 
   description = "Host the VM will reside on"
   type        = string
-
+  sensitive = true
 }
 
 variable "vsphere_datastore" {
@@ -144,5 +146,5 @@ variable "k8s_token" {
 
   description = "Token to allow workers to join the control plane"
   type        = string
-
+  sensitive = true
 }

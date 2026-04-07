@@ -2,26 +2,28 @@ variable "vsphere_user" {
 
   description = "The username used to authenticate with vsphere"
   type        = string
+  sensitive = true
 }
 
 variable "vsphere_password" {
 
   description = "The password used to authenticate with vsphere"
   type        = string
+  sensitive = true
 }
 
 variable "vsphere_server" {
 
   description = "The server tofu will authenticate to"
   type        = string
-
+  sensitive = true
 }
 
 variable "vsphere_host" {
 
   description = "Host the VM will reside on"
   type        = string
-
+  sensitive = true
 }
 
 variable "vsphere_datastore" {
@@ -144,14 +146,14 @@ variable "ssh_username" {
 
   description = "Username of the user to manage the machine"
   type        = string
-
+  sensitive = true
 }
 
 variable "k8s_token" {
 
   description = "Token used to allow clients to join the controller node"
   type = string
-
+  sensitive = true
 }
 
 
@@ -159,21 +161,21 @@ variable "cloudflare_account_id" {
 
   description = "Cloudflare Account ID"
   type = string
-
+  sensitive = true
 }
 
 variable "cloudflare_api_key" {
 
   description = "Cloudflare API Key"
   type = string
-
+  sensitive = true
 }
 
 variable "bucket_name" {
 
   description = "Bucket to place the Kubernetes Config"
   type = string
-
+  sensitive = true
 }
 
 variable "internet_port_group" {

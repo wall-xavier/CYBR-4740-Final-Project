@@ -47,13 +47,6 @@ data "vsphere_network" "network" {
 
 }
 
-data "vsphere_network" "network1"{
-
-  name = "Updating Port Group"
-  datacenter_id = data.vsphere_datacenter.datacenter.id
-
-}
-
 data "vsphere_virtual_machine" "template" {
 
   name          = var.vm_template
@@ -74,16 +67,12 @@ resource "vsphere_virtual_machine" "freeipa-server" {
   firmware                   = data.vsphere_virtual_machine.template.firmware
   folder                     = vsphere_folder.vm_folder.path
 
+  wait_for_guest_net_timeout = 0
+
   network_interface {
     network_id   = data.vsphere_network.network.id
     adapter_type = data.vsphere_virtual_machine.template.network_interface_types[0]
   }
-
-  network_interface {
-    network_id   = data.vsphere_network.network1.id
-    adapter_type = data.vsphere_virtual_machine.template.network_interface_types[0]
-  }
-
 
   disk {
     label            = "disk0"
@@ -101,10 +90,9 @@ resource "vsphere_virtual_machine" "freeipa-server" {
 runcmd:
   - nmcli c mod "System ens160" ipv4.method static ipv4.address ${cidrhost(var.env_networks[terraform.workspace].subnet, count.index + var.ip_offset)}/${var.ip_netmask}  ifname ens160
   - nmcli c up "System ens160"
-  - nmcli c add con-name "Internet" ipv4.method auto ifname ens192 type ethernet
-  - nmcli c up "Internet"
   - sleep 5
-  - hostnamectl set-hostname ${var.vm_host_name}-${terraform.workspace}-${random_uuid.vm_id[count.index].result}}
+  - hostnamectl set-hostname ipa.profos-systems.com
+  - ipa-server-install -r ${var.ipa_realm} -n ${var.ipa_domain_name} -p ${var.dm_password} -a ${var.admin_password} --unattended
   - systemctl restart vmtoolsd
 EOF
     )
