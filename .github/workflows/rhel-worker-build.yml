@@ -98,7 +98,7 @@ jobs:
       TF_VAR_k8s_token: ${{ secrets.K8S_JOIN_TOKEN }}
       TF_VAR_ssh_username: ${{ secrets.SSH_USERNAME }}
     defaults:
-      run: working-directory: ./Tofu/live/RHEL-Worker/
+      run: working-directory: ./Tofu/live/RHEL-K8s-Worker/
     steps:
       - name: Checkout
         uses: actions/checkout@v6
