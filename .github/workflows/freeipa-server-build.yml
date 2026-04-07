@@ -121,7 +121,8 @@ jobs:
         id: plan
         run: tofu plan
 
-       - uses: peter-evans/create-or-update-comment@v4
+      - name: Comment
+        uses: peter-evans/create-or-update-comment@v4
         if: always()
         env:
           RESULT_EMOJI: ${{ steps.plan.outcome == 'success' && '✅' || '⚠️' }}
