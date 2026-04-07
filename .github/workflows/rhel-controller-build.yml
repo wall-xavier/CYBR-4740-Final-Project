@@ -70,11 +70,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
 
+      - name: Tofu Init
+        run: tofu init
+
       - name: Set Workspace
         run: |
-          tofu workspace new dev
-          tofu workspace select dev
-          tofu init -reconfigure
+          tofu workspace select dev || tofu workspace new dev
 
       - name: Tofu Plan
         id: plan
