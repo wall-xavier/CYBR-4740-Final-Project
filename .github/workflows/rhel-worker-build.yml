@@ -2,7 +2,7 @@ name: Build and Test RHEL Worker
 
 on:
 
-  pull-request:
+  pull_request:
     branches: [ main ]
     paths:
       - 'Packer/RHEL-K8s-Worker/**'

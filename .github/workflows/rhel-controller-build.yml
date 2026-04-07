@@ -2,7 +2,7 @@ name: Build and Test RHEL Controller
 
 on:
 
-  pull-request:
+  pull_request:
     branches: [ main ]
     paths:
       - 'Packer/RHEL-K8s-Controller/**'

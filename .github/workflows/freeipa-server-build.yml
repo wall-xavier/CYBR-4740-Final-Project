@@ -2,7 +2,7 @@ name: Build and Test FreeIPA
 
 on:
 
-  pull-request:
+  pull_request:
     branches: [ main ]
     paths:
       - 'Packer/FreeIPA/**'
