@@ -1,10 +1,14 @@
-name: Build and Test RHEL Worker
+name: Deploy FreeRadius Server
 
 on:
-  workflow_call:
 
+  push:
+    branches: [ main ]
+    paths:
+      - 'Packer/FreeRadius/**'
+      - 'Tofu/live/FreeRadius/**'
 jobs:
-  build:
+  template:
     runs-on: self-hosted
     env:
       PKR_VAR_REDHAT_ORGID: ${{ secrets.REDHAT_ORGID }}
@@ -16,7 +20,7 @@ jobs:
       PKR_VAR_username: ${{ secrets.VCENTER_USERNAME }}
     defaults:
       run:
-        working-directory: ./Packer/RHEL-K8s-Worker/
+        working-directory: ./Packer/FreeRadius/
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -42,8 +46,8 @@ jobs:
         env: 
           PKR_VAR_bind_address: ${{ steps.get_ip.outputs.ip }}
         run: /usr/bin/packer build -force .
-  test:
-    needs: build
+  deploy:
+    needs: template
     runs-on: self-hosted
     env:
       AWS_DEFAULT_REGION: wnam
@@ -54,51 +58,9 @@ jobs:
       TF_VAR_vsphere_password: ${{ secrets.VCENTER_PASSWORD}}
       TF_VAR_vsphere_server: ${{ secrets.VCENTER_SERVER }}
       TF_VAR_vsphere_host: ${{ secrets.VSPHERE_HOST }}
-      TF_VAR_k8s_token: ${{ secrets.K8S_JOIN_TOKEN }}
-      TF_VAR_ssh_username: ${{ secrets.SSH_USERNAME }}
     defaults:
       run:
-        working-directory: ./Tofu/live/RHEL-K8s-Worker/
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-
-      - name: Tofu Init
-        run: tofu init
-
-      - name: Set Workspace
-        run: |
-          tofu workspace select dev || tofu workspace new dev
-
-      - name: Tofu Plan
-        run: tofu plan
-
-      - name: Tofu Build
-        run: tofu apply -auto-approve
-
-      - name: Kubernetes Test
-        uses: ./.github/workflows/kubernetes-tests.yml
-
-      - name: Tofu Destroy
-        run: tofu destroy -auto-approve
-
-  request:
-    needs: test
-    runs-on: self-hosted
-    env:
-      AWS_DEFAULT_REGION: wnam
-      AWS_ENDPOINT_URL_S3: ${{ secrets.CLOUDFLARE_BUCKET_URL }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.CLOUDFLARE_BUCKET_SECRET_ACCESS_KEY }}
-      AWS_ACCESS_KEY_ID: ${{ secrets.CLOUDFLARE_BUCKET_ACCESS_KEY_ID }}
-      TF_VAR_vsphere_user: ${{ secrets.VCENTER_USERNAME }}
-      TF_VAR_vsphere_password: ${{ secrets.VCENTER_PASSWORD}}
-      TF_VAR_vsphere_server: ${{ secrets.VCENTER_SERVER }}
-      TF_VAR_vsphere_host: ${{ secrets.VSPHERE_HOST }}
-      TF_VAR_k8s_token: ${{ secrets.K8S_JOIN_TOKEN }}
-      TF_VAR_ssh_username: ${{ secrets.SSH_USERNAME }}
-    defaults:
-      run:
-        working-directory: ./Tofu/live/RHEL-K8s-Worker/
+        working-directory: ./Tofu/live/FreeRadius/
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -110,5 +72,6 @@ jobs:
         run: |
           tofu workspace select prod || tofu workspace new prod
 
-      - name: Tofu Plan
-        run: tofu plan
+      - name: Tofu Build
+        id: apply
+        run: tofu apply -auto-approve

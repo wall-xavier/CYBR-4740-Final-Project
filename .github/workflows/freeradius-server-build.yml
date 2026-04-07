@@ -1,8 +1,12 @@
-name: Build and Test RHEL Worker
+name: Build and Test FreeRadius
 
 on:
-  workflow_call:
 
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'Packer/FreeRadius/**'
+      - 'Tofu/live/FreeRadius/**'
 jobs:
   build:
     runs-on: self-hosted
@@ -16,11 +20,10 @@ jobs:
       PKR_VAR_username: ${{ secrets.VCENTER_USERNAME }}
     defaults:
       run:
-        working-directory: ./Packer/RHEL-K8s-Worker/
+        working-directory: ./Packer/FreeRadius/
     steps:
       - name: Checkout
         uses: actions/checkout@v6
-
 
       - name: Get Runner IP Address
         id: get_ip
@@ -54,11 +57,9 @@ jobs:
       TF_VAR_vsphere_password: ${{ secrets.VCENTER_PASSWORD}}
       TF_VAR_vsphere_server: ${{ secrets.VCENTER_SERVER }}
       TF_VAR_vsphere_host: ${{ secrets.VSPHERE_HOST }}
-      TF_VAR_k8s_token: ${{ secrets.K8S_JOIN_TOKEN }}
-      TF_VAR_ssh_username: ${{ secrets.SSH_USERNAME }}
     defaults:
       run:
-        working-directory: ./Tofu/live/RHEL-K8s-Worker/
+        working-directory: ./Tofu/live/FreeRadius/
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -76,11 +77,8 @@ jobs:
       - name: Tofu Build
         run: tofu apply -auto-approve
 
-      - name: Kubernetes Test
-        uses: ./.github/workflows/kubernetes-tests.yml
-
       - name: Tofu Destroy
-        run: tofu destroy -auto-approve
+        run: tofu destroy -auto-approve -compact-warnings
 
   request:
     needs: test
@@ -94,11 +92,9 @@ jobs:
       TF_VAR_vsphere_password: ${{ secrets.VCENTER_PASSWORD}}
       TF_VAR_vsphere_server: ${{ secrets.VCENTER_SERVER }}
       TF_VAR_vsphere_host: ${{ secrets.VSPHERE_HOST }}
-      TF_VAR_k8s_token: ${{ secrets.K8S_JOIN_TOKEN }}
-      TF_VAR_ssh_username: ${{ secrets.SSH_USERNAME }}
     defaults:
       run:
-        working-directory: ./Tofu/live/RHEL-K8s-Worker/
+        working-directory: ./Tofu/live/FreeRadius/
     steps:
       - name: Checkout
         uses: actions/checkout@v6
