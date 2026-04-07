@@ -77,3 +77,7 @@ jobs:
       - name: Tofu Build
         id: apply
         run: tofu apply -auto-approve
+
+  build-kubernetes:
+    needs: deploy
+    uses: ./.github/workflows/kubernetes-deploy.yml
