@@ -2,45 +2,18 @@ name: Build and Test RHEL Worker
 
 on:
   workflow_call:
-    secrets:
-      PKR_VAR_REDHAT_ORGID:
-        required: true
-      PKR_VAR_RHEL_ACTIVATION_KEY:
-        required: true
-      PKR_VAR_ssh_password:
-        required: true
-      PKR_VAR_ssh_username:
-        required: true
-      PKR_VAR_password:
-        required: true
-      PKR_VAR_vcenter_server:
-        required: true
-      PKR_VAR_username:
-        required: true
-      AWS_DEFAULT_REGION:
-        required: true
-      AWS_ENDPOINT_URL_S3:
-        required: true
-      AWS_SECRET_ACCESS_KEY:
-        required: true
-      AWS_ACCESS_KEY_ID:
-        required: true
-      TF_VAR_vsphere_user:
-        required: true
-      TF_VAR_vsphere_password:
-        required: true
-      TF_VAR_vsphere_server:
-        required: true
-      TF_VAR_vsphere_host:
-        required: true
-      TF_VAR_k8s_token:
-        required: true
-      TF_VAR_ssh_username:
-        required: true
 
 jobs:
   build:
     runs-on: self-hosted
+    env:
+      PKR_VAR_REDHAT_ORGID: ${{ secrets.REDHAT_ORGID }}
+      PKR_VAR_RHEL_ACTIVATION_KEY: ${{ secrets.RHEL_ACTIVATION_KEY }}
+      PKR_VAR_ssh_password: ${{ secrets.SSH_PASSWORD }}
+      PKR_VAR_ssh_username: ${{ secrets.SSH_USERNAME }}
+      PKR_VAR_password: ${{ secrets.VCENTER_PASSWORD }}
+      PKR_VAR_vcenter_server: ${{ secrets.VCENTER_SERVER }}
+      PKR_VAR_username: ${{ secrets.VCENTER_USERNAME }}
     defaults:
       run:
         working-directory: ./Packer/RHEL-K8s-Worker/
@@ -73,6 +46,17 @@ jobs:
   test:
     needs: build
     runs-on: self-hosted
+    env:
+      AWS_DEFAULT_REGION: wnam
+      AWS_ENDPOINT_URL_S3: ${{ secrets.CLOUDFLARE_BUCKET_URL }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.CLOUDFLARE_BUCKET_SECRET_ACCESS_KEY }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.CLOUDFLARE_BUCKET_ACCESS_KEY_ID }}
+      TF_VAR_vsphere_user: ${{ secrets.VCENTER_USERNAME }}
+      TF_VAR_vsphere_password: ${{ secrets.VCENTER_PASSWORD}}
+      TF_VAR_vsphere_server: ${{ secrets.VCENTER_SERVER }}
+      TF_VAR_vsphere_host: ${{ secrets.VSPHERE_HOST }}
+      TF_VAR_k8s_token: ${{ secrets.K8S_JOIN_TOKEN }}
+      TF_VAR_ssh_username: ${{ secrets.SSH_USERNAME }}
     defaults:
       run:
         working-directory: ./Tofu/live/RHEL-K8s-Worker/
@@ -96,17 +80,21 @@ jobs:
   kubernetes-build:
     needs: test
     uses: ./.github/workflows/kubernetes-tests.yml
-    secrets:
+    secrets: inherit
+  destroy:
+    needs: kubernetes-build
+    runs-on: self-hosted
+    env:
       AWS_DEFAULT_REGION: wnam
       AWS_ENDPOINT_URL_S3: ${{ secrets.CLOUDFLARE_BUCKET_URL }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.CLOUDFLARE_BUCKET_SECRET_ACCESS_KEY }}
       AWS_ACCESS_KEY_ID: ${{ secrets.CLOUDFLARE_BUCKET_ACCESS_KEY_ID }}
-      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_R2_API }}
-
-  destroy:
-    needs: kubernetes-build
-    runs-on: self-hosted
+      TF_VAR_vsphere_user: ${{ secrets.VCENTER_USERNAME }}
+      TF_VAR_vsphere_password: ${{ secrets.VCENTER_PASSWORD}}
+      TF_VAR_vsphere_server: ${{ secrets.VCENTER_SERVER }}
+      TF_VAR_vsphere_host: ${{ secrets.VSPHERE_HOST }}
+      TF_VAR_k8s_token: ${{ secrets.K8S_JOIN_TOKEN }}
+      TF_VAR_ssh_username: ${{ secrets.SSH_USERNAME }}
     defaults:
       run:
         working-directory: ./Tofu/live/RHEL-K8s-Worker/
@@ -128,6 +116,17 @@ jobs:
   request:
     needs: destroy
     runs-on: self-hosted
+    env:
+      AWS_DEFAULT_REGION: wnam
+      AWS_ENDPOINT_URL_S3: ${{ secrets.CLOUDFLARE_BUCKET_URL }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.CLOUDFLARE_BUCKET_SECRET_ACCESS_KEY }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.CLOUDFLARE_BUCKET_ACCESS_KEY_ID }}
+      TF_VAR_vsphere_user: ${{ secrets.VCENTER_USERNAME }}
+      TF_VAR_vsphere_password: ${{ secrets.VCENTER_PASSWORD}}
+      TF_VAR_vsphere_server: ${{ secrets.VCENTER_SERVER }}
+      TF_VAR_vsphere_host: ${{ secrets.VSPHERE_HOST }}
+      TF_VAR_k8s_token: ${{ secrets.K8S_JOIN_TOKEN }}
+      TF_VAR_ssh_username: ${{ secrets.SSH_USERNAME }}
     defaults:
       run:
         working-directory: ./Tofu/live/RHEL-K8s-Worker/
