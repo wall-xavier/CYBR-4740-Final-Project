@@ -138,3 +138,35 @@ variable "ip_offset" {
   type        = number
   default     = 15
 }
+
+variable "ipa_realm"{ 
+
+  description = "The Realm to be used by the IPA server"
+  type = string
+  default = "profos-systems.com"
+
+}
+
+variable "ipa_domain_name" {
+
+  description = "The domain the IPA server resides in"
+  type = string
+  default = "profos-systems.com"
+
+}
+
+variable "dm_password" {
+
+  description = "The password for the IPA database"
+  type = string
+  sensitive = true
+
+}
+
+variable "admin_password" {
+
+  description = "The admin password for the IPA server"
+  type = string
+  sensitive = true
+
+}
