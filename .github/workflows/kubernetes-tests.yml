@@ -2,6 +2,19 @@ name: Kubernetes Build and Test
 
 on:
   workflow_call:
+    secrets:
+      AWS_DEFAULT_REGION:
+        required: true
+      AWS_ENDPOINT_URL_S3:
+        required: true
+      AWS_SECRET_ACCESS_KEY:
+        required: true
+      AWS_ACCESS_KEY_ID:
+        required: true
+      CLOUDFLARE_ACCOUNT_ID:
+        required: true
+      CLOUDFLARE_API_TOKEN:
+        required: true
 
 jobs:
   networking:

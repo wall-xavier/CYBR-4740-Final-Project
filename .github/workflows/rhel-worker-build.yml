@@ -2,6 +2,41 @@ name: Build and Test RHEL Worker
 
 on:
   workflow_call:
+    secrets:
+      PKR_VAR_REDHAT_ORGID:
+        required: true
+      PKR_VAR_RHEL_ACTIVATION_KEY:
+        required: true
+      PKR_VAR_ssh_password:
+        required: true
+      PKR_VAR_ssh_username:
+        required: true
+      PKR_VAR_password:
+        required: true
+      PKR_VAR_vcenter_server:
+        required: true
+      PKR_VAR_username:
+        required: true
+      AWS_DEFAULT_REGION:
+        required: true
+      AWS_ENDPOINT_URL_S3:
+        required: true
+      AWS_SECRET_ACCESS_KEY:
+        required: true
+      AWS_ACCESS_KEY_ID:
+        required: true
+      TF_VAR_vsphere_user:
+        required: true
+      TF_VAR_vsphere_password:
+        required: true
+      TF_VAR_vsphere_server:
+        required: true
+      TF_VAR_vsphere_host:
+        required: true
+      TF_VAR_k8s_token:
+        required: true
+      TF_VAR_ssh_username:
+        required: true
 
 jobs:
   build:
