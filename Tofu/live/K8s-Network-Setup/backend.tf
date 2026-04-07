@@ -2,7 +2,7 @@ terraform {
 
   backend "s3" {
 
-    key    = "services/k8s-network-setup/${terraform.workspace}/terraform.tfstate"
+    key    = "services/k8s-network-setup/terraform.tfstate"
     bucket = "cybr-4740-backend-bucket"
 
     skip_credentials_validation = true

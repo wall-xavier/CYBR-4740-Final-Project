@@ -75,8 +75,7 @@ jobs:
 
       - name: Set Workspace
         run: |
-          tofu workspace new dev
-          tofu workspace select dev
+          tofu workspace new dev || tofu workspace select dev
 
       - name: Tofu Plan
         id: plan
