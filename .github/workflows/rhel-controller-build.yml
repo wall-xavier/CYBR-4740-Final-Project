@@ -88,7 +88,24 @@ jobs:
   build-worker:
     needs: test
     uses: ./.github/workflows/rhel-worker-build.yml
-
+    env:
+      PKR_VAR_REDHAT_ORGID: ${{ secrets.REDHAT_ORGID }}
+      PKR_VAR_RHEL_ACTIVATION_KEY: ${{ secrets.RHEL_ACTIVATION_KEY }}
+      PKR_VAR_ssh_password: ${{ secrets.SSH_PASSWORD }}
+      PKR_VAR_ssh_username: ${{ secrets.SSH_USERNAME }}
+      PKR_VAR_password: ${{ secrets.VCENTER_PASSWORD }}
+      PKR_VAR_vcenter_server: ${{ secrets.VCENTER_SERVER }}
+      PKR_VAR_username: ${{ secrets.VCENTER_USERNAME }}
+      AWS_DEFAULT_REGION: wnam
+      AWS_ENDPOINT_URL_S3: ${{ secrets.CLOUDFLARE_BUCKET_URL }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.CLOUDFLARE_BUCKET_SECRET_ACCESS_KEY }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.CLOUDFLARE_BUCKET_ACCESS_KEY_ID }}
+      TF_VAR_vsphere_user: ${{ secrets.VCENTER_USERNAME }}
+      TF_VAR_vsphere_password: ${{ secrets.VCENTER_PASSWORD}}
+      TF_VAR_vsphere_server: ${{ secrets.VCENTER_SERVER }}
+      TF_VAR_vsphere_host: ${{ secrets.VSPHERE_HOST }}
+      TF_VAR_k8s_token: ${{ secrets.K8S_JOIN_TOKEN }}
+      TF_VAR_ssh_username: ${{ secrets.SSH_USERNAME }}
 
   destroy:
     needs: build-worker
