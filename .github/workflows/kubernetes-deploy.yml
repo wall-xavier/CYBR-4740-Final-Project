@@ -14,7 +14,8 @@ jobs:
       CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_R2_API }}
     defaults:
-      working-directory: ./Tofu/live/K8s-Network-Setup/
+      run:
+        working-directory: ./Tofu/live/K8s-Network-Setup/
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -46,7 +47,8 @@ jobs:
       CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_R2_API }}
     defaults:
-      working-directory: ./Tofu/live/Metallb-Installtion/
+      run:
+        working-directory: ./Tofu/live/Metallb-Installtion/
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -76,9 +78,10 @@ jobs:
       AWS_SECRET_ACCESS_KEY: ${{ secrets.CLOUDFLARE_BUCKET_SECRET_ACCESS_KEY }}
       AWS_ACCESS_KEY_ID: ${{ secrets.CLOUDFLARE_BUCKET_ACCESS_KEY_ID }}
       CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-      CLOUDFLARE_API_TOKEN: ${{ secretes.CLOUDFLARE_R2_API }}
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_R2_API }}
     defaults:
-      working-directory: ./Tofu/live/Metallb-IPAddresses/
+      run:
+        working-directory: ./Tofu/live/Metallb-IPAddresses/
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -108,9 +111,10 @@ jobs:
       AWS_SECRET_ACCESS_KEY: ${{ secrets.CLOUDFLARE_BUCKET_SECRET_ACCESS_KEY }}
       AWS_ACCESS_KEY_ID: ${{ secrets.CLOUDFLARE_BUCKET_ACCESS_KEY_ID }}
       CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-      CLOUDFLARE_API_TOKEN: ${{ secretes.CLOUDFLARE_R2_API }}
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_R2_API }}
     defaults:
-      working-directory: ./Tofu/live/Web-Server/
+      run:
+        working-directory: ./Tofu/live/Web-Server/
     steps:
       - name: Checkout
         uses: actions/checkout@v6
