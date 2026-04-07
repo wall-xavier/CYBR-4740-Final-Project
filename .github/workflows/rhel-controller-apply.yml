@@ -1,14 +1,14 @@
-name: Build and Test FreeIPA
+name: Deploy RHEL Controller
 
 on:
 
-  pull-request:
+  push:
     branches: [ main ]
     paths:
-      - 'Packer/FreeIPA/**'
-      - 'Tofu/live/FreeIPA/**'
+      - 'Packer/RHEL-K8s-Controller/**'
+      - 'Tofu/live/RHEL-K8s-Controller/**'
 jobs:
-  build:
+  template:
     runs-on: self-hosted
     env:
       PKR_VAR_REDHAT_ORGID: ${{ secrets.REDHAT_ORGID }}
@@ -20,7 +20,7 @@ jobs:
       PKR_VAR_username: ${{ secrets.VCENTER_USERNAME }}
     defaults:
       run:
-        working-directory: ./Packer/FreeIPA/
+        working-directory: ./Packer/RHEL-K8s-Controller/
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -46,8 +46,8 @@ jobs:
         env: 
           PKR_VAR_bind_address: ${{ steps.get_ip.outputs.ip }}
         run: /usr/bin/packer build -force .
-  test:
-    needs: build
+  deploy:
+    needs: template
     runs-on: self-hosted
     env:
       AWS_DEFAULT_REGION: wnam
@@ -65,7 +65,7 @@ jobs:
       TF_VAR_ssh_username: ${{ secrets.SSH_USERNAME }}
     defaults:
       run:
-        working-directory: ./Tofu/live/FreeIPA/
+        working-directory: ./Tofu/live/RHEL-K8s-Controller/
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -75,58 +75,8 @@ jobs:
 
       - name: Set Workspace
         run: |
-          tofu workspace select dev || tofu workspace new dev
-
-      - name: Tofu Plan
-        run: tofu plan
+          tofu workspace select prod || tofu workspace new prod
 
       - name: Tofu Build
+        id: apply
         run: tofu apply -auto-approve
-
-      - name: Tofu Destroy
-        run: tofu destroy -auto-approve
-
-  request:
-    needs:
-      [build, test]
-    runs-on: self-hosted
-    env:
-      AWS_DEFAULT_REGION: wnam
-      AWS_ENDPOINT_URL_S3: ${{ secrets.CLOUDFLARE_BUCKET_URL }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.CLOUDFLARE_BUCKET_SECRET_ACCESS_KEY }}
-      AWS_ACCESS_KEY_ID: ${{ secrets.CLOUDFLARE_BUCKET_ACCESS_KEY_ID }}
-      TF_VAR_vsphere_user: ${{ secrets.VCENTER_USERNAME }}
-      TF_VAR_vsphere_password: ${{ secrets.VCENTER_PASSWORD}}
-      TF_VAR_vsphere_server: ${{ secrets.VCENTER_SERVER }}
-      TF_VAR_vsphere_host: ${{ secrets.VSPHERE_HOST }}
-      TF_VAR_bucket_name: ${{ secrets.KUBERNETES_CONFIG_BUCKET }}
-      TF_VAR_cloudflare_api_key: ${{ secrets.CLOUDFLARE_R2_API }}
-      TF_VAR_cloudflare_account_id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-      TF_VAR_k8s_token: ${{ secrets.K8S_JOIN_TOKEN }}
-      TF_VAR_ssh_username: ${{ secrets.SSH_USERNAME }}
-    defaults:
-      run:
-        working-directory: ./Tofu/live/FreeIPA/
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-
-      - name: Tofu Init
-        run: tofu init
-
-      - name: Set Workspace
-        run: tofu workspace select prod || tofu workspace new prod
-
-      - name: Tofu Plan
-        id: plan
-        run: tofu plan
-
-       - uses: peter-evans/create-or-update-comment@v4
-        if: always()
-        env:
-          RESULT_EMOJI: ${{ steps.plan.outcome == 'success' && '✅' || '⚠️' }}
-        with:
-          issue-number: ${{ github.event.pull_request.number }}
-          body: |
-            ```Build and Test completed successfully. The following output shows the changes to be applied.```
-            ```${{ steps.plan.outputs.stdout }}```
