@@ -27,7 +27,12 @@ jobs:
         run: |
           CONFIG_DATA=$(npx wrangler r2 object get ${{ secrets.CLOUDFLARE_BUCKET_NAME}}/kubernetes-configuration/dev/config --pipe --remote)
           echo "::add-mask::$CONFIG_DATA"
-          echo "TF_VAR_k8s_config_raw=$CONFIG_DATA" >> $GITHUB_ENV
+          echo "TF_VAR_k8s_config_raw=$CONFIG_DATA"
+
+          echo "TF_VAR_k8s_config_raw<<EOF" >> $GITHUB_ENV
+          echo "$CONFIG_DATA" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
 
       - name: Set Workspace
         run: |
@@ -61,7 +66,11 @@ jobs:
         run: |
           CONFIG_DATA=$(npx wrangler r2 object get ${{ secrets.CLOUDFLARE_BUCKET_NAME}}/kubernetes-configuration/dev/config --pipe --remote)
           echo "::add-mask::$CONFIG_DATA"
-          echo "TF_VAR_k8s_config_raw=$CONFIG_DATA" >> $GITHUB_ENV
+          echo "TF_VAR_k8s_config_raw=$CONFIG_DATA"
+
+          echo "TF_VAR_k8s_config_raw<<EOF" >> $GITHUB_ENV
+          echo "$CONFIG_DATA" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
 
       - name: Set Workspace
         run: |
@@ -95,7 +104,11 @@ jobs:
         run: |
           CONFIG_DATA=$(npx wrangler r2 object get ${{ secrets.CLOUDFLARE_BUCKET_NAME}}/kubernetes-configuration/dev/config --pipe --remote)
           echo "::add-mask::$CONFIG_DATA"
-          echo "TF_VAR_k8s_config_raw=$CONFIG_DATA" >> $GITHUB_ENV
+          echo "TF_VAR_k8s_config_raw=$CONFIG_DATA"
+
+          echo "TF_VAR_k8s_config_raw<<EOF" >> $GITHUB_ENV
+          echo "$CONFIG_DATA" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
 
       - name: Set Workspace
         run: |
@@ -129,7 +142,11 @@ jobs:
         run: |
           CONFIG_DATA=$(npx wrangler r2 object get ${{ secrets.CLOUDFLARE_BUCKET_NAME}}/kubernetes-configuration/dev/config --pipe --remote)
           echo "::add-mask::$CONFIG_DATA"
-          echo "TF_VAR_k8s_config_raw=$CONFIG_DATA" >> $GITHUB_ENV
+          echo "TF_VAR_k8s_config_raw=$CONFIG_DATA"
+
+          echo "TF_VAR_k8s_config_raw<<EOF" >> $GITHUB_ENV
+          echo "$CONFIG_DATA" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
 
       - name: Set Workspace
         run: |
