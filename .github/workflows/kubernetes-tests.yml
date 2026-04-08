@@ -12,6 +12,7 @@ jobs:
       AWS_ACCESS_KEY_ID: ${{ secrets.CLOUDFLARE_BUCKET_ACCESS_KEY_ID }}
       CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_R2_API }}
+      CLOUDFLARE_BUCKET_NAME: ${{ secrets.CLOUDFLARE_BUCKET_NAME }}
     defaults:
       run:
         working-directory: ./Tofu/live/K8s-Network-Setup/
@@ -24,7 +25,7 @@ jobs:
 
       - name: Fetch K8s Config
         run: |
-          CONFIG_DATA=$(npx wrangler r2 object get ${{ secrets.CLOUDFLARE_BUCKET_URL}}/kubernetes-configuration/dev/config --pipe --remote)
+          CONFIG_DATA=$(npx wrangler r2 object get ${{ secrets.CLOUDFLARE_BUCKET_NAME}}/kubernetes-configuration/dev/config --pipe --remote)
           echo "::add-mask::$CONFIG_DATA"
           echo "TF_VAR_k8s_config_raw=$CONFIG_DATA" >> $GITHUB_ENV
 
@@ -45,6 +46,7 @@ jobs:
       AWS_ACCESS_KEY_ID: ${{ secrets.CLOUDFLARE_BUCKET_ACCESS_KEY_ID }}
       CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_R2_API }}
+      CLOUDFLARE_BUCKET_NAME: ${{ secrets.CLOUDFLARE_BUCKET_NAME }}
     defaults:
       run:
         working-directory: ./Tofu/live/Metallb-Installtion/
@@ -57,7 +59,7 @@ jobs:
 
       - name: Fetch K8s Config
         run: |
-          CONFIG_DATA=$(npx wrangler r2 object get ${{ secrets.CLOUDFLARE_BUCKET_URL}}/kubernetes-configuration/dev/config --pipe --remote)
+          CONFIG_DATA=$(npx wrangler r2 object get ${{ secrets.CLOUDFLARE_BUCKET_NAME}}/kubernetes-configuration/dev/config --pipe --remote)
           echo "::add-mask::$CONFIG_DATA"
           echo "TF_VAR_k8s_config_raw=$CONFIG_DATA" >> $GITHUB_ENV
 
@@ -78,6 +80,7 @@ jobs:
       AWS_ACCESS_KEY_ID: ${{ secrets.CLOUDFLARE_BUCKET_ACCESS_KEY_ID }}
       CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_R2_API }}
+      CLOUDFLARE_BUCKET_NAME: ${{ secrets.CLOUDFLARE_BUCKET_NAME }}
     defaults:
         run:
           working-directory: ./Tofu/live/Metallb-IPAddresses/
@@ -90,7 +93,7 @@ jobs:
 
       - name: Fetch K8s Config
         run: |
-          CONFIG_DATA=$(npx wrangler r2 object get ${{ secrets.CLOUDFLARE_BUCKET_URL}}/kubernetes-configuration/dev/config --pipe --remote)
+          CONFIG_DATA=$(npx wrangler r2 object get ${{ secrets.CLOUDFLARE_BUCKET_NAME}}/kubernetes-configuration/dev/config --pipe --remote)
           echo "::add-mask::$CONFIG_DATA"
           echo "TF_VAR_k8s_config_raw=$CONFIG_DATA" >> $GITHUB_ENV
 
@@ -111,6 +114,7 @@ jobs:
       AWS_ACCESS_KEY_ID: ${{ secrets.CLOUDFLARE_BUCKET_ACCESS_KEY_ID }}
       CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_R2_API }}
+      CLOUDFLARE_BUCKET_NAME: ${{ secrets.CLOUDFLARE_BUCKET_NAME }}
     defaults:
       run:
         working-directory: ./Tofu/live/Web-Server/
@@ -123,7 +127,7 @@ jobs:
 
       - name: Fetch K8s Config
         run: |
-          CONFIG_DATA=$(npx wrangler r2 object get ${{ secrets.CLOUDFLARE_BUCKET_URL}}/kubernetes-configuration/dev/config --pipe --remote)
+          CONFIG_DATA=$(npx wrangler r2 object get ${{ secrets.CLOUDFLARE_BUCKET_NAME}}/kubernetes-configuration/dev/config --pipe --remote)
           echo "::add-mask::$CONFIG_DATA"
           echo "TF_VAR_k8s_config_raw=$CONFIG_DATA" >> $GITHUB_ENV
 
