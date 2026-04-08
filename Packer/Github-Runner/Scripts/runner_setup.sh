@@ -48,7 +48,7 @@ sudo dnf module enable -y nodejs:20
 sudo dnf install -y nodejs
 
 # Install Wrangler
-sudo npm i -D wrangler@latest
+npm i -D wrangler@latest
 
 
 # Cleanup passwordless sudo authentication
