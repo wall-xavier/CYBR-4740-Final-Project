@@ -5,6 +5,7 @@ sudo yum install -y yum-utils
 sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/RHEL/hashicorp.repo
 sudo yum -y install packer
 
+
 # Install Github tools
 cd /usr/src/
 sudo mkdir actions-runner
@@ -41,6 +42,14 @@ sudo ./install-opentofu.sh --install-method rpm
 # Disable Firewall to allow the runner to deploy an HTTP server anywhere
 sudo systemctl stop firewalld
 sudo systemctl disable firewalld
+
+# Install NodeJS
+sudo dnf module enable -y nodejs:20
+sudo dnf install -y nodejs
+
+# Install Wrangler
+sudo npm i -D wrangler@latest
+
 
 # Cleanup passwordless sudo authentication
 sudo rm -r /etc/sudoers.d/packer
