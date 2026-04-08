@@ -81,3 +81,4 @@ jobs:
   build-kubernetes:
     needs: deploy
     uses: ./.github/workflows/kubernetes-deploy.yml
+    secrets: inherit
