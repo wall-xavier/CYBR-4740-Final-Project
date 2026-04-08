@@ -60,7 +60,7 @@ jobs:
 
       - name: Fetch K8s Config
         run: |
-          CONFIG_DATA=$(npx wrangler r2 object get ${{ secrets.CLOUDFLARE_BUCKET_NAME}}/kubernetes-configuration/prod/config --pipe --remote)
+          CONFIG_DATA=$(npx wrangler r2 object get ${{ secrets.CLOUDFLARE_BUCKET_NAME }}/kubernetes-configuration/prod/config --pipe --remote)
           echo "::add-mask::$CONFIG_DATA"
           echo "TF_VAR_k8s_config_raw<<EOF" >> $GITHUB_ENV
           echo "$CONFIG_DATA" >> $GITHUB_ENV
@@ -87,7 +87,7 @@ jobs:
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_R2_API }}
     defaults:
       run:
-        working-directory: ./Tofu/live/Metallb-IPAddresses/
+        working-directory: ./Tofu/live/Metallb-IPPool/
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -97,7 +97,7 @@ jobs:
 
       - name: Fetch K8s Config
         run: |
-          CONFIG_DATA=$(npx wrangler r2 object get ${{ secrets.CLOUDFLARE_BUCKET_NAME}}/kubernetes-configuration/prod/config --pipe --remote)
+          CONFIG_DATA=$(npx wrangler r2 object get ${{ secrets.CLOUDFLARE_BUCKET_NAME }}/kubernetes-configuration/prod/config --pipe --remote)
           echo "::add-mask::$CONFIG_DATA"
           echo "TF_VAR_k8s_config_raw<<EOF" >> $GITHUB_ENV
           echo "$CONFIG_DATA" >> $GITHUB_ENV
@@ -132,7 +132,7 @@ jobs:
 
       - name: Fetch K8s Config
         run: |
-          CONFIG_DATA=$(npx wrangler r2 object get ${{ secrets.CLOUDFLARE_BUCKET_NAME}}/kubernetes-configuration/prod/config --pipe --remote)
+          CONFIG_DATA=$(npx wrangler r2 object get ${{ secrets.CLOUDFLARE_BUCKET_NAME }}/kubernetes-configuration/prod/config --pipe --remote)
           echo "::add-mask::$CONFIG_DATA"
           echo "TF_VAR_k8s_config_raw<<EOF" >> $GITHUB_ENV
           echo "$CONFIG_DATA" >> $GITHUB_ENV

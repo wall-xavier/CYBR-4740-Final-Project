@@ -92,7 +92,7 @@ jobs:
       CLOUDFLARE_BUCKET_NAME: ${{ secrets.CLOUDFLARE_BUCKET_NAME }}
     defaults:
         run:
-          working-directory: ./Tofu/live/Metallb-IPAddresses/
+          working-directory: ./Tofu/live/Metallb-IPPool/
     steps:
       - name: Checkout
         uses: actions/checkout@v6
