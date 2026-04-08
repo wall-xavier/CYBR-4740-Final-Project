@@ -1,4 +1,4 @@
-name: Kubernetes Build and Test
+name: Kubernetes Deploy
 
 on:
   workflow_call:
